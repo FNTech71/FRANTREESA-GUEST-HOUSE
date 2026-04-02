@@ -1,267 +1,478 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Frantreesa Guest House</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
-:root {
-  --bg: #F7F5F0;
-  --surface: #FFFFFF;
-  --surface2: #F0EDE6;
-  --border: #E2DDD5;
-  --border2: #CCC8BF;
-  --text: #1A1714;
-  --text2: #6B6560;
-  --text3: #9E9891;
-  --green: #1A7A52;
-  --green-bg: #E8F5EE;
-  --green-light: #D1EDE0;
-  --red: #C0392B;
-  --red-bg: #FDECEA;
-  --amber: #B45309;
-  --amber-bg: #FEF3C7;
-  --blue: #1D4ED8;
-  --blue-bg: #EFF6FF;
-  --radius: 10px;
-  --radius-sm: 6px;
+[data-theme="dark"]{
+  --bg:#0D0D0D;--bg2:#141414;--bg3:#1A1A1A;--surface:#1E1E1E;--surface2:#252525;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#F0EDE8;--text2:#A09A90;--text3:#605A52;
+  --gold:#C9A84C;--gold2:#E8C97A;--gold-bg:rgba(201,168,76,0.09);--gold-border:rgba(201,168,76,0.28);
+  --green:#2ECC8A;--green-bg:rgba(46,204,138,0.09);
+  --red:#E05555;--red-bg:rgba(224,85,85,0.09);
+  --amber:#E8A020;--amber-bg:rgba(232,160,32,0.09);
+  --blue:#5B9CF6;--blue-bg:rgba(91,156,246,0.09);
+  --shadow:0 4px 24px rgba(0,0,0,0.5);--shadow-sm:0 2px 8px rgba(0,0,0,0.4);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+[data-theme="light"]{
+  --bg:#F5F2EC;--bg2:#FFFFFF;--bg3:#F0EDE6;--surface:#FFFFFF;--surface2:#F7F4EF;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+  --text:#1A1714;--text2:#6B6057;--text3:#A09585;
+  --gold:#9A6F20;--gold2:#7A5410;--gold-bg:rgba(154,111,32,0.08);--gold-border:rgba(154,111,32,0.22);
+  --green:#0E7A4A;--green-bg:rgba(14,122,74,0.09);
+  --red:#C0392B;--red-bg:rgba(192,57,43,0.09);
+  --amber:#8A5A00;--amber-bg:rgba(138,90,0,0.09);
+  --blue:#1A56C4;--blue-bg:rgba(26,86,196,0.09);
+  --shadow:0 4px 24px rgba(0,0,0,0.1);--shadow-sm:0 2px 8px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
 /* LAYOUT */
-.shell { display: flex; min-height: 100vh; }
-.sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 10; }
-.logo { padding: 0 1.25rem 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
-.logo h1 { font-family: 'DM Serif Display', serif; font-size: 19px; color: var(--text); line-height: 1.2; }
-.logo p { font-size: 12px; color: var(--text3); margin-top: 3px; }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 1.25rem; font-size: 14px; color: var(--text2); cursor: pointer; border-left: 2px solid transparent; transition: all 0.15s; }
-.nav-item:hover { color: var(--text); background: var(--bg); }
-.nav-item.active { color: var(--green); background: var(--green-bg); border-left-color: var(--green); font-weight: 500; }
-.nav-icon { font-size: 16px; width: 20px; text-align: center; }
-.sidebar-footer { margin-top: auto; padding: 1rem 1.25rem 0; border-top: 1px solid var(--border); }
-.sidebar-footer p { font-size: 11px; color: var(--text3); line-height: 1.5; }
+.shell{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:200;overflow:hidden;transition:transform .3s cubic-bezier(.4,0,.2,1),background .3s}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:199;backdrop-filter:blur(2px)}
+.overlay.open{display:block}
+.main{margin-left:240px;flex:1;padding:1.75rem 2rem;transition:margin .3s}
 
-.main { margin-left: 220px; flex: 1; padding: 2rem; }
-.page { display: none; }
-.page.active { display: block; }
+.logo-wrap{padding:1.5rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.logo-eyebrow{font-size:9px;font-weight:600;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.logo-eyebrow::before{content:'';width:16px;height:1px;background:var(--gold);flex-shrink:0}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--text);line-height:1.2}
+.logo-date{font-size:11px;color:var(--text3);margin-top:5px}
 
-/* TOPBAR */
-.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
-.topbar h2 { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); }
-.topbar p { font-size: 13px; color: var(--text3); margin-top: 2px; }
+.nav-wrap{padding:1rem .75rem;flex:1;overflow-y:auto}
+.nav-section-label{font-size:9.5px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;font-weight:600;padding:0 .75rem;margin:1rem 0 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;font-size:13.5px;color:var(--text2);cursor:pointer;border-radius:8px;transition:all .15s;margin-bottom:2px;border:1px solid transparent;user-select:none}
+.nav-item:hover{color:var(--text);background:var(--surface2)}
+.nav-item.active{color:var(--gold2);background:var(--gold-bg);border-color:var(--gold-border);font-weight:500}
+.nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;min-width:18px;text-align:center}
+.nav-item.owner-nav{color:var(--gold);border-color:var(--gold-border);background:var(--gold-bg)}
+.nav-item.owner-nav:hover{background:var(--gold-bg);opacity:.85}
 
-/* CARDS & GRIDS */
-.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 1.5rem; }
-.metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.25rem; }
-.metric .m-label { font-size: 12px; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
-.metric .m-val { font-size: 26px; font-weight: 600; color: var(--text); }
-.metric .m-val.green { color: var(--green); }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
-.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
-.card-header h3 { font-size: 15px; font-weight: 600; }
-
-/* TABLES */
-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-th { text-align: left; padding: 9px 12px; font-size: 11px; color: var(--text3); border-bottom: 1px solid var(--border); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
-td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: var(--bg); }
-.empty-row td { text-align: center; padding: 2.5rem; color: var(--text3); font-size: 14px; }
-
-/* BADGES */
-.badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-.badge.green { background: var(--green-bg); color: var(--green); }
-.badge.red { background: var(--red-bg); color: var(--red); }
-.badge.amber { background: var(--amber-bg); color: var(--amber); }
-.badge.blue { background: var(--blue-bg); color: var(--blue); }
-
-/* FORMS */
-.form-section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-.form-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
-.form-grid.cols1 { grid-template-columns: 1fr; }
-.fg { display: flex; flex-direction: column; gap: 5px; }
-.fg label { font-size: 13px; color: var(--text2); font-weight: 500; }
-.fg input, .fg select, .fg textarea {
-  padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
-  background: var(--surface); color: var(--text); font-size: 14px; font-family: 'DM Sans', sans-serif;
-  transition: border-color 0.15s; outline: none;
-}
-.fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,122,82,0.08); }
-.fg textarea { resize: vertical; min-height: 70px; }
-.fg .hint { font-size: 11px; color: var(--text3); }
-.optional { font-size: 11px; color: var(--text3); font-weight: 400; }
-.divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
-
-/* CALC BOX */
-.calc-box { background: var(--green-bg); border: 1px solid var(--green-light); border-radius: var(--radius); padding: 1.1rem 1.25rem; margin: 1rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-.calc-box .calc-info { font-size: 13px; color: var(--green); }
-.calc-box .calc-info strong { font-size: 15px; display: block; margin-bottom: 2px; }
-.calc-box .calc-total { font-size: 28px; font-weight: 600; color: var(--green); }
-
-/* BUTTONS */
-.btn { padding: 9px 18px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-size: 14px; cursor: pointer; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
-.btn:hover { background: var(--bg); }
-.btn.primary { background: var(--green); color: #fff; border-color: var(--green); }
-.btn.primary:hover { background: #155e3e; }
-.btn.danger { background: var(--red); color: #fff; border-color: var(--red); }
-.btn.danger:hover { background: #9b2d22; }
-.btn.info { background: var(--blue); color: #fff; border-color: var(--blue); }
-.btn.info:hover { background: #1a44c2; }
-.btn.sm { padding: 5px 12px; font-size: 12px; }
-.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1rem; }
-
-/* ROOMS GRID */
-.rooms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
-.room-tile { border: 1.5px solid var(--border); border-radius: var(--radius); padding: 14px 10px; text-align: center; }
-.room-tile.available { border-color: var(--green); background: var(--green-bg); }
-.room-tile.occupied { border-color: var(--red); background: var(--red-bg); }
-.room-tile.soon { background: var(--surface2); opacity: 0.6; }
-.room-num { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
-.room-status { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-.room-tile.available .room-status { color: var(--green); }
-.room-tile.occupied .room-status { color: var(--red); }
-.room-tile.soon .room-status { color: var(--text3); }
-.room-guest { font-size: 11px; color: var(--red); margin-top: 3px; }
-
-/* SALES */
-.sales-item-row { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; align-items: center; margin-bottom: 8px; }
-.sales-item-row input, .sales-item-row select {
-  padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm);
-  background: var(--surface); color: var(--text); font-size: 13px; font-family: 'DM Sans', sans-serif; width: 100%;
-}
-.rm-btn { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 20px; line-height: 1; padding: 0 4px; }
-.rm-btn:hover { color: var(--red); }
-.total-strip { background: var(--surface2); border-radius: var(--radius); padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
-.total-strip .lbl { font-size: 14px; font-weight: 500; }
-.total-strip .amt { font-size: 24px; font-weight: 600; color: var(--green); }
-
-/* CHART */
-.week-chart { display: flex; align-items: flex-end; gap: 8px; height: 130px; margin: 1rem 0 0.5rem; }
-.wc-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.wc-bar { width: 100%; background: var(--green); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s; }
-.wc-lbl { font-size: 11px; color: var(--text3); }
-.wc-val { font-size: 10px; font-weight: 600; color: var(--green); text-align: center; }
-
-/* TOAST */
-.toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 500; opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s; transform: translateY(8px); z-index: 999; color: #fff; font-family: 'DM Sans', sans-serif; max-width: 320px; }
-.toast.show { opacity: 1; transform: translateY(0); }
+.sidebar-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);flex-shrink:0}
+.staff-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.staff-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold-bg);border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0}
+.staff-name{font-size:12px;font-weight:600;color:var(--text)}
+.staff-role{font-size:11px;color:var(--text3)}
+.theme-toggle{display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:4px 6px 4px 10px;cursor:pointer;transition:all .2s;user-select:none}
+.theme-toggle-label{font-size:11px;color:var(--text2);font-weight:500}
+.toggle-track{width:32px;height:18px;background:var(--border2);border-radius:20px;position:relative;transition:background .2s;flex-shrink:0}
+[data-theme="dark"] .toggle-track{background:var(--gold)}
+.toggle-thumb{width:12px;height:12px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .2s}
+[data-theme="dark"] .toggle-thumb{transform:translateX(14px)}
 
 /* MOBILE */
-@media (max-width: 680px) {
-  .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; flex-wrap: wrap; padding: 0.75rem; }
-  .logo { display: none; }
-  .nav-item { padding: 7px 10px; font-size: 12px; border-left: none; border-bottom: 2px solid transparent; }
-  .nav-item.active { border-left: none; border-bottom-color: var(--green); }
-  .sidebar-footer { display: none; }
-  .shell { flex-direction: column; }
-  .main { margin-left: 0; padding: 1rem; }
-  .form-grid { grid-template-columns: 1fr; }
-  .form-grid.cols3 { grid-template-columns: 1fr 1fr; }
-  .sales-item-row { grid-template-columns: 1fr 1fr; }
+.mobile-header{display:none;align-items:center;justify-content:space-between;padding:.9rem 1rem;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;gap:12px}
+.mobile-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--text)}
+.hamburger{background:none;border:1px solid var(--border2);border-radius:7px;padding:7px 9px;cursor:pointer;color:var(--text);font-size:16px;line-height:1}
+.mobile-time{font-size:12px;color:var(--text3)}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem;gap:12px;flex-wrap:wrap}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;line-height:1;color:var(--text)}
+.page-sub{font-size:13px;color:var(--text3);margin-top:5px}
+.topbar-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.clock-chip{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:5px 13px;font-size:12px;color:var(--text2)}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.5rem}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.2rem;position:relative;overflow:hidden;transition:border-color .2s,transform .15s,box-shadow .2s}
+.metric:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.metric-shine{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .3s}
+.metric:hover .metric-shine{opacity:1}
+.m-label{font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:8px}
+.m-val{font-size:26px;font-weight:600;color:var(--text);font-family:'Cormorant Garamond',serif;line-height:1}
+.m-val.gold{color:var(--gold2)}.m-val.green{color:var(--green)}.m-val.red{color:var(--red)}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.4rem;margin-bottom:1.25rem;transition:background .3s,border-color .3s}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;gap:10px;flex-wrap:wrap}
+.card-title{font-size:14px;font-weight:600;letter-spacing:.01em;color:var(--text)}
+.card-sub{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* TABLES */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:480px}
+th{text-align:left;padding:9px 13px;font-size:10px;color:var(--text3);border-bottom:1px solid var(--border);font-weight:700;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+td{padding:12px 13px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .1s}
+tbody tr:hover td{background:var(--bg3)}
+.empty-state{text-align:center;padding:2.5rem;color:var(--text3);font-size:13.5px}
+.g-name{font-weight:600;color:var(--text);font-size:13px}
+.g-phone{font-size:11px;color:var(--text3);margin-top:1px}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.badge.green{background:var(--green-bg);color:var(--green);border:1px solid rgba(46,204,138,.2)}.badge.green::before{background:var(--green)}
+.badge.red{background:var(--red-bg);color:var(--red);border:1px solid rgba(224,85,85,.2)}.badge.red::before{background:var(--red)}
+.badge.amber{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(232,160,32,.2)}.badge.amber::before{background:var(--amber)}
+.badge.blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,156,246,.2)}.badge.blue::before{background:var(--blue)}
+.badge.gold{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-border)}.badge.gold::before{background:var(--gold)}
+
+/* FORMS */
+.section-divider{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin:0 0 1rem;padding-bottom:9px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-grid.g3{grid-template-columns:1fr 1fr 1fr}
+.form-grid.g1{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:12px;color:var(--text2);font-weight:600;letter-spacing:.02em}
+.fg input,.fg select,.fg textarea{padding:10px 12px;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);color:var(--text);font-size:13.5px;font-family:'Outfit',sans-serif;transition:border-color .15s,box-shadow .15s,background .3s;outline:none;-webkit-appearance:none;width:100%}
+.fg input::placeholder{color:var(--text3)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-bg)}
+.fg select option{background:var(--surface);color:var(--text)}
+.fg textarea{resize:vertical;min-height:70px;line-height:1.5}
+.fg .hint{font-size:11px;color:var(--text3);line-height:1.4}
+.opt{color:var(--text3);font-weight:400;font-size:11px}
+.form-block{margin-bottom:1.5rem}
+
+.calc-box{background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:10px;padding:1.1rem 1.25rem;margin:1rem 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.calc-title{font-size:13px;color:var(--gold);font-weight:600}
+.calc-detail{font-size:12px;color:var(--text3);margin-top:3px}
+.calc-amount{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--gold)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);font-size:13px;cursor:pointer;font-weight:500;font-family:'Outfit',sans-serif;transition:all .15s;white-space:nowrap;user-select:none;-webkit-appearance:none}
+.btn:hover{background:var(--surface);border-color:var(--border2)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--gold);color:#0D0D0D;border-color:var(--gold);font-weight:700}
+.btn.primary:hover{opacity:.9}
+.btn.danger{background:var(--red-bg);color:var(--red);border-color:rgba(224,85,85,.3)}
+.btn.danger:hover{background:var(--red);color:#fff}
+.btn.success{background:var(--green-bg);color:var(--green);border-color:rgba(46,204,138,.3)}
+.btn.success:hover{background:var(--green);color:#0D0D0D}
+.btn.sm{padding:6px 12px;font-size:12px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.1rem}
+
+/* ROOMS */
+.rooms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.room-tile{border:1px solid var(--border);border-radius:10px;padding:1.1rem .75rem;text-align:center;transition:all .18s}
+.room-tile.available{border-color:rgba(46,204,138,.35);background:var(--green-bg)}
+.room-tile.occupied{border-color:rgba(224,85,85,.35);background:var(--red-bg)}
+.room-tile.soon{background:var(--bg3);opacity:.45}
+.room-num{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;margin-bottom:4px}
+.room-tile.available .room-num{color:var(--green)}
+.room-tile.occupied .room-num{color:var(--red)}
+.room-tile.soon .room-num{color:var(--text3)}
+.room-status{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.room-tile.available .room-status{color:var(--green)}
+.room-tile.occupied .room-status{color:var(--red)}
+.room-tile.soon .room-status{color:var(--text3)}
+.room-guest{font-size:11px;color:var(--text2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* SALES */
+.sales-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.sales-row input,.sales-row select{padding:8px 10px;border:1px solid var(--border2);border-radius:7px;background:var(--bg3);color:var(--text);font-size:13px;font-family:'Outfit',sans-serif;width:100%}
+.rm-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;padding:0 4px;transition:color .15s;line-height:1}
+.rm-btn:hover{color:var(--red)}
+.total-strip{background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:10px;padding:.9rem 1.2rem;display:flex;justify-content:space-between;align-items:center;margin-top:1rem}
+.ts-label{font-size:13px;font-weight:600;color:var(--text2)}
+.ts-val{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:var(--gold)}
+
+/* CHART */
+.week-chart{display:flex;align-items:flex-end;gap:6px;height:130px;margin:1rem 0 .5rem}
+.wc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.wc-bar{width:100%;background:linear-gradient(to top,var(--gold),var(--gold2));border-radius:4px 4px 0 0;min-height:4px;transition:height .4s ease}
+.wc-bar.empty{background:var(--surface2)}
+.wc-lbl{font-size:10px;color:var(--text3)}
+.wc-val{font-size:9px;font-weight:600;color:var(--gold);text-align:center;min-height:12px;white-space:nowrap}
+
+/* BANNERS */
+.banner{border-radius:8px;padding:9px 14px;display:flex;align-items:center;gap:10px;font-size:12px;margin-bottom:1.25rem;flex-wrap:wrap}
+.banner.gold{background:var(--gold-bg);border:1px solid var(--gold-border);color:var(--gold)}
+.banner.red{background:var(--red-bg);border:1px solid rgba(224,85,85,.25);color:var(--red)}
+.banner.green{background:var(--green-bg);border:1px solid rgba(46,204,138,.25);color:var(--green)}
+.banner.blue{background:var(--blue-bg);border:1px solid rgba(91,156,246,.25);color:var(--blue)}
+.pulse{width:8px;height:8px;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
+.pulse.gold{background:var(--gold)}.pulse.red{background:var(--red)}.pulse.green{background:var(--green)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+
+/* CHECKOUT SOON */
+.co-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:8px}
+.co-item:last-child{border-bottom:none}
+.co-avatar{width:32px;height:32px;border-radius:50%;background:var(--amber-bg);border:1px solid rgba(232,160,32,.25);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--amber);flex-shrink:0}
+.co-name{font-size:13px;font-weight:600;color:var(--text)}
+.co-info{font-size:11px;color:var(--text3)}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:1rem}
+.search-wrap input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);color:var(--text);font-size:13px;font-family:'Outfit',sans-serif;outline:none;transition:border-color .15s}
+.search-wrap input:focus{border-color:var(--gold)}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;pointer-events:none}
+
+/* RECEIPT MODAL */
+.modal-wrap{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem}
+.modal-wrap.open{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:2rem;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
+.receipt-header{text-align:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px dashed var(--border2)}
+.receipt-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text)}
+.receipt-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.receipt-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);gap:8px}
+.receipt-row:last-child{border-bottom:none}
+.receipt-row .rl{font-size:12px;color:var(--text3);flex-shrink:0}
+.receipt-row .rv{font-size:13px;font-weight:600;color:var(--text);text-align:right}
+.receipt-total{display:flex;justify-content:space-between;margin-top:1rem;padding-top:1rem;border-top:2px solid var(--gold-border)}
+.receipt-total .rl{font-size:14px;font-weight:700;color:var(--text)}
+.receipt-total .rv{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--gold)}
+.receipt-footer{text-align:center;margin-top:1.25rem;font-size:11px;color:var(--text3);line-height:1.8}
+
+/* ══ PIN / OWNER LOCK ══ */
+.pin-screen{display:none;position:fixed;inset:0;z-index:600;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;padding:2rem}
+.pin-screen.open{display:flex}
+.pin-logo{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--gold);text-align:center;line-height:1.2}
+.pin-sub{font-size:13px;color:var(--text3);text-align:center}
+.pin-dots{display:flex;gap:12px;justify-content:center;margin:8px 0}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border2);transition:all .2s}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold)}
+.pin-dot.error{background:var(--red);border-color:var(--red)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:240px}
+.pin-btn{padding:18px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-size:20px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;transition:all .15s;text-align:center}
+.pin-btn:hover{background:var(--surface2);border-color:var(--gold)}
+.pin-btn:active{transform:scale(.94)}
+.pin-btn.del{font-size:16px;color:var(--text3)}
+.pin-btn.del:hover{color:var(--red)}
+.pin-error{color:var(--red);font-size:12px;text-align:center;min-height:18px}
+
+/* OWNER DASHBOARD */
+.owner-header{background:linear-gradient(135deg,var(--gold-bg),transparent);border:1px solid var(--gold-border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.owner-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--gold)}
+.owner-sub{font-size:12px;color:var(--text3);margin-top:3px}
+.alert-card{border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;border:1px solid}
+.alert-card.warn{background:var(--red-bg);border-color:rgba(224,85,85,.3)}
+.alert-card.ok{background:var(--green-bg);border-color:rgba(46,204,138,.25)}
+.alert-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.alert-card.warn .alert-title{color:var(--red)}
+.alert-card.ok .alert-title{color:var(--green)}
+.alert-body{font-size:12px;color:var(--text2);line-height:1.6}
+.gap-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.gap-row:last-child{border-bottom:none}
+.gap-label{color:var(--text2)}
+.gap-val{font-weight:700}
+.gap-val.danger{color:var(--red)}
+.gap-val.safe{color:var(--green)}
+
+/* ACTIVITY LOG */
+.log-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
+.log-item:last-child{border-bottom:none}
+.log-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.log-dot.green{background:var(--green)}
+.log-dot.red{background:var(--red)}
+.log-dot.amber{background:var(--amber)}
+.log-dot.blue{background:var(--blue)}
+.log-time{color:var(--text3);font-size:11px;white-space:nowrap;margin-top:1px}
+.log-msg{color:var(--text2);flex:1;line-height:1.5}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;transform:translateY(8px);z-index:9999;font-family:'Outfit',sans-serif;border:1px solid var(--border);box-shadow:var(--shadow);max-width:320px;line-height:1.4}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.t-success{background:var(--green-bg);color:var(--green);border-color:rgba(46,204,138,.25)}
+.toast.t-error{background:var(--red-bg);color:var(--red);border-color:rgba(224,85,85,.25)}
+.toast.t-info{background:var(--gold-bg);color:var(--gold);border-color:var(--gold-border)}
+
+.page{display:none;animation:fadeIn .18s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:var(--shadow)}
+  .main{margin-left:0;padding:1rem}
+  .mobile-header{display:flex}
+  .page-title{font-size:24px}
+  .metrics{grid-template-columns:1fr 1fr;gap:10px}
+  .m-val{font-size:22px}
+  .form-grid,.form-grid.g3{grid-template-columns:1fr}
+  .sales-row{grid-template-columns:1fr 1fr}
+  .rooms-grid{grid-template-columns:repeat(auto-fill,minmax(90px,1fr))}
+  .btn{font-size:12.5px;padding:8px 14px}
+  .card{padding:1rem}
+  table{min-width:380px}
+  .pin-pad{width:210px}
+  .pin-btn{padding:15px}
+}
+@media(max-width:400px){
+  .metrics{grid-template-columns:1fr 1fr}
+  .m-val{font-size:19px}
 }
 </style>
 </head>
 <body>
 
-<div class="shell">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="logo">
-      <h1>Frantreesa<br>Guest House</h1>
-      <p id="sideDate"></p>
+<!-- PIN SCREEN -->
+<div class="pin-screen" id="pin-screen">
+  <div style="text-align:center">
+    <div class="pin-logo">Frantreesa<br>Guest House</div>
+    <div style="font-size:11px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-top:6px">Owner Dashboard</div>
+  </div>
+  <div class="pin-sub">Enter your 4-digit PIN to access</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-error" id="pin-error"></div>
+  <div class="pin-pad">
+    <button class="pin-btn" onclick="pinPress('1')">1</button>
+    <button class="pin-btn" onclick="pinPress('2')">2</button>
+    <button class="pin-btn" onclick="pinPress('3')">3</button>
+    <button class="pin-btn" onclick="pinPress('4')">4</button>
+    <button class="pin-btn" onclick="pinPress('5')">5</button>
+    <button class="pin-btn" onclick="pinPress('6')">6</button>
+    <button class="pin-btn" onclick="pinPress('7')">7</button>
+    <button class="pin-btn" onclick="pinPress('8')">8</button>
+    <button class="pin-btn" onclick="pinPress('9')">9</button>
+    <button class="pin-btn" style="opacity:0" disabled></button>
+    <button class="pin-btn" onclick="pinPress('0')">0</button>
+    <button class="pin-btn del" onclick="pinDel()">⌫</button>
+  </div>
+  <button class="btn" onclick="closePinScreen()" style="font-size:12px;padding:7px 16px">Cancel</button>
+</div>
+
+<!-- RECEIPT MODAL -->
+<div class="modal-wrap" id="receipt-modal">
+  <div class="modal-box">
+    <div class="receipt-header">
+      <div class="receipt-logo">Frantreesa Guest House</div>
+      <div class="receipt-sub">Official Guest Receipt</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px" id="receipt-date"></div>
     </div>
-    <nav>
-      <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">🏠</span> Dashboard</div>
-      <div class="nav-item" onclick="showPage('register',this)"><span class="nav-icon">📋</span> Register guest</div>
-      <div class="nav-item" onclick="showPage('rooms',this)"><span class="nav-icon">🛏</span> Rooms</div>
-      <div class="nav-item" onclick="showPage('sales',this)"><span class="nav-icon">💰</span> Daily sales</div>
-      <div class="nav-item" onclick="showPage('report',this)"><span class="nav-icon">📊</span> Weekly report</div>
-    </nav>
+    <div id="receipt-content"></div>
+    <div class="receipt-footer">
+      Thank you for choosing Frantreesa Guest House<br>
+      We look forward to welcoming you again<br>
+      <span style="color:var(--gold)">★★★★★</span>
+    </div>
+    <div class="btn-row" style="justify-content:center;margin-top:1.25rem">
+      <button class="btn primary" onclick="window.print()">🖨 Print</button>
+      <button class="btn" onclick="document.getElementById('receipt-modal').classList.remove('open')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo-wrap">
+      <div class="logo-eyebrow">Est. 2024</div>
+      <div class="logo-name">Frantreesa<br>Guest House</div>
+      <div class="logo-date" id="sideDate"></div>
+    </div>
+    <div class="nav-wrap">
+      <div class="nav-section-label">Main</div>
+      <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">🏠</span>Dashboard</div>
+      <div class="nav-item" onclick="showPage('register',this)"><span class="nav-icon">✦</span>Register guest</div>
+      <div class="nav-item" onclick="showPage('rooms',this)"><span class="nav-icon">🛏</span>Rooms</div>
+      <div class="nav-section-label">Finance</div>
+      <div class="nav-item" onclick="showPage('sales',this)"><span class="nav-icon">💰</span>Daily sales</div>
+      <div class="nav-item" onclick="showPage('report',this)"><span class="nav-icon">📊</span>Weekly report</div>
+      <div class="nav-section-label">Tools</div>
+      <div class="nav-item" onclick="showPage('checkout',this)"><span class="nav-icon">🔔</span>Check-outs soon<span class="nav-badge" id="co-badge">0</span></div>
+      <div class="nav-item" onclick="showPage('search',this)"><span class="nav-icon">🔍</span>Guest search</div>
+      <div class="nav-section-label">Owner</div>
+      <div class="nav-item owner-nav" onclick="openPinScreen()"><span class="nav-icon">🔒</span>Owner dashboard</div>
+    </div>
     <div class="sidebar-footer">
-      <p>Managed by<br><strong>Frederick Nyarko</strong></p>
+      <div class="staff-row">
+        <div class="staff-avatar">FN</div>
+        <div><div class="staff-name">Frederick Nyarko</div><div class="staff-role">Manager</div></div>
+      </div>
+      <div class="theme-toggle" onclick="toggleTheme()">
+        <span class="theme-toggle-label" id="theme-label">Dark mode</span>
+        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      </div>
     </div>
   </aside>
 
   <main class="main">
+    <div class="mobile-header">
+      <button class="hamburger" onclick="openSidebar()">☰</button>
+      <div class="mobile-logo">Frantreesa</div>
+      <div class="mobile-time" id="mobileTime"></div>
+    </div>
 
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
       <div class="topbar">
-        <div><h2>Dashboard</h2><p id="topDate"></p></div>
-        <button class="btn info" onclick="sendWeeklyEmail()">📧 Send weekly report</button>
+        <div><div class="page-title">Dashboard</div><div class="page-sub" id="topDate"></div></div>
+        <div class="topbar-right"><div class="clock-chip" id="topTime"></div></div>
+      </div>
+      <div id="auto-banner" class="banner gold" style="display:none">
+        <div class="pulse gold"></div>
+        <span>Auto daily report active — sends to franknyarko81@gmail.com at 9:00 PM every day</span>
+      </div>
+      <div id="co-banner" class="banner red" style="display:none">
+        <div class="pulse red"></div>
+        <span id="co-banner-text"></span>
       </div>
       <div class="metrics">
-        <div class="metric"><div class="m-label">Rooms occupied</div><div class="m-val" id="d-occ">0 / 4</div></div>
-        <div class="metric"><div class="m-label">Active guests</div><div class="m-val" id="d-guests">0</div></div>
-        <div class="metric"><div class="m-label">Today's revenue</div><div class="m-val green" id="d-today">GHS 0.00</div></div>
-        <div class="metric"><div class="m-label">This week</div><div class="m-val green" id="d-week">GHS 0.00</div></div>
+        <div class="metric"><div class="metric-shine"></div><div class="m-label">Rooms occupied</div><div class="m-val gold" id="d-occ">0 / 4</div></div>
+        <div class="metric"><div class="metric-shine"></div><div class="m-label">Active guests</div><div class="m-val" id="d-guests">0</div></div>
+        <div class="metric"><div class="metric-shine"></div><div class="m-label">Today's revenue</div><div class="m-val green" id="d-today">GHS 0.00</div></div>
+        <div class="metric"><div class="metric-shine"></div><div class="m-label">This week</div><div class="m-val green" id="d-week">GHS 0.00</div></div>
       </div>
       <div class="card">
-        <div class="card-header"><h3>Active guests</h3></div>
-        <table>
-          <thead><tr><th>Guest</th><th>Nationality</th><th>Room</th><th>Guests</th><th>Check-in</th><th>Check-out</th><th>Total paid</th><th></th></tr></thead>
-          <tbody id="active-table"><tr class="empty-row"><td colspan="8">No active guests right now</td></tr></tbody>
-        </table>
+        <div class="card-header">
+          <div><div class="card-title">Active guests</div><div class="card-sub">Currently checked in</div></div>
+          <button class="btn success sm" onclick="sendDailyReport()">✉ Send report now</button>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Guest</th><th>Nationality</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Total</th><th></th></tr></thead>
+          <tbody id="active-table"><tr><td colspan="7" class="empty-state">No active guests right now</td></tr></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- REGISTER GUEST -->
+    <!-- REGISTER -->
     <div id="page-register" class="page">
-      <div class="topbar"><div><h2>Register guest</h2><p>Fill in all required fields to check in a new guest</p></div></div>
+      <div class="topbar"><div><div class="page-title">Register guest</div><div class="page-sub">Fill in all required fields to check in a new guest</div></div></div>
       <div class="card">
-        <div class="form-section-label">Personal information</div>
-        <div class="form-grid">
-          <div class="fg"><label>Full name *</label><input type="text" id="r-name" placeholder="e.g. Kofi Asante Mensah"></div>
-          <div class="fg"><label>Phone number *</label><input type="tel" id="r-phone" placeholder="0XX XXX XXXX"></div>
-        </div>
-        <div class="form-grid">
-          <div class="fg"><label>Nationality *</label><input type="text" id="r-nationality" placeholder="e.g. Ghanaian"></div>
-          <div class="fg"><label>ID / Passport number <span class="optional">(optional)</span></label><input type="text" id="r-id" placeholder="GHA-XXXXXXXX or leave blank"></div>
-        </div>
-        <div class="form-grid">
-          <div class="fg"><label>Emergency contact name *</label><input type="text" id="r-ecname" placeholder="e.g. Ama Mensah"></div>
-          <div class="fg"><label>Emergency contact phone *</label><input type="tel" id="r-ecphone" placeholder="0XX XXX XXXX"></div>
-        </div>
-
-        <hr class="divider">
-        <div class="form-section-label">Stay details</div>
-        <div class="form-grid cols3">
-          <div class="fg"><label>Adults *</label><input type="number" id="r-adults" min="1" value="1"></div>
-          <div class="fg"><label>Children</label><input type="number" id="r-kids" min="0" value="0"></div>
-          <div class="fg"><label>Room *</label><select id="r-room"></select></div>
-        </div>
-        <div class="form-grid">
-          <div class="fg"><label>Check-in date *</label><input type="date" id="r-checkin" oninput="calcTotal()"></div>
-          <div class="fg"><label>Check-out date *</label><input type="date" id="r-checkout" oninput="calcTotal()"></div>
-        </div>
-        <div class="form-grid">
-          <div class="fg">
-            <label>Rate per night (GHS) *</label>
-            <input type="number" id="r-rate" placeholder="e.g. 150" oninput="calcTotal()">
-            <span class="hint">Total will be calculated automatically</span>
+        <div class="form-block">
+          <div class="section-divider">👤 Personal information</div>
+          <div class="form-grid">
+            <div class="fg"><label>Full name *</label><input type="text" id="r-name" placeholder="e.g. Kofi Asante Mensah"></div>
+            <div class="fg"><label>Phone number *</label><input type="tel" id="r-phone" placeholder="0XX XXX XXXX"></div>
           </div>
-          <div class="fg"><label>Payment method</label>
-            <select id="r-payment">
-              <option>Cash</option><option>Mobile Money</option><option>Bank transfer</option><option>Card</option>
-            </select>
+          <div class="form-grid">
+            <div class="fg"><label>Nationality *</label><input type="text" id="r-nationality" placeholder="e.g. Ghanaian"></div>
+            <div class="fg"><label>ID / Passport <span class="opt">(optional)</span></label><input type="text" id="r-id" placeholder="GHA-XXXXXXXX"></div>
+          </div>
+          <div class="form-grid">
+            <div class="fg"><label>Emergency contact name *</label><input type="text" id="r-ecname" placeholder="e.g. Ama Mensah"></div>
+            <div class="fg"><label>Emergency contact phone *</label><input type="tel" id="r-ecphone" placeholder="0XX XXX XXXX"></div>
           </div>
         </div>
-
-        <div class="calc-box">
-          <div class="calc-info">
-            <strong id="calc-nights-label">Select dates and rate to calculate</strong>
-            <span id="calc-breakdown"></span>
+        <div class="form-block">
+          <div class="section-divider">🛏 Stay details</div>
+          <div class="form-grid g3">
+            <div class="fg"><label>Adults *</label><input type="number" id="r-adults" min="1" value="1"></div>
+            <div class="fg"><label>Children</label><input type="number" id="r-kids" min="0" value="0"></div>
+            <div class="fg"><label>Room *</label><select id="r-room"></select></div>
           </div>
-          <div class="calc-total" id="calc-total">GHS 0.00</div>
+          <div class="form-grid">
+            <div class="fg"><label>Check-in date *</label><input type="date" id="r-checkin" oninput="calcTotal()"></div>
+            <div class="fg"><label>Check-out date *</label><input type="date" id="r-checkout" oninput="calcTotal()"></div>
+          </div>
+          <div class="form-grid">
+            <div class="fg"><label>Rate per night (GHS) *</label><input type="number" id="r-rate" placeholder="e.g. 150" oninput="calcTotal()"><span class="hint">Total auto-calculated from nights × rate</span></div>
+            <div class="fg"><label>Payment method</label><select id="r-payment"><option>Cash</option><option>Mobile Money</option><option>Bank transfer</option><option>Card</option></select></div>
+          </div>
+          <div class="calc-box">
+            <div><div class="calc-title" id="calc-lbl">Select dates and rate to calculate</div><div class="calc-detail" id="calc-breakdown"></div></div>
+            <div class="calc-amount" id="calc-total">GHS 0.00</div>
+          </div>
+          <div class="form-grid g1"><div class="fg"><label>Notes <span class="opt">(optional)</span></label><textarea id="r-notes" placeholder="Special requests, observations..."></textarea></div></div>
         </div>
-
-        <div class="form-grid cols1">
-          <div class="fg"><label>Notes <span class="optional">(optional)</span></label><textarea id="r-notes" placeholder="Special requests, observations, anything else..."></textarea></div>
-        </div>
-
         <div class="btn-row">
           <button class="btn primary" onclick="registerGuest()">✓ Confirm registration</button>
           <button class="btn" onclick="clearRegForm()">Clear form</button>
@@ -271,87 +482,161 @@ tr:hover td { background: var(--bg); }
 
     <!-- ROOMS -->
     <div id="page-rooms" class="page">
-      <div class="topbar"><div><h2>Rooms</h2><p>4 active rooms · 7 coming soon</p></div></div>
+      <div class="topbar"><div><div class="page-title">Rooms</div><div class="page-sub">4 active · 7 coming soon</div></div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Room status</div></div><div class="rooms-grid" id="rooms-grid"></div></div>
       <div class="card">
-        <div class="card-header"><h3>Room status</h3></div>
-        <div class="rooms-grid" id="rooms-grid"></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><h3>All guest records</h3></div>
-        <table>
-          <thead><tr><th>Guest</th><th>Nationality</th><th>ID</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Nights</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead>
-          <tbody id="all-guests-table"><tr class="empty-row"><td colspan="10">No guest records yet</td></tr></tbody>
-        </table>
+        <div class="card-header"><div class="card-title">All guest records</div></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Guest</th><th>Nationality</th><th>ID</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Nights</th><th>Total</th><th>Payment</th><th>Status</th><th></th></tr></thead>
+          <tbody id="all-guests-table"><tr><td colspan="11" class="empty-state">No guest records yet</td></tr></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- DAILY SALES -->
+    <!-- SALES -->
     <div id="page-sales" class="page">
-      <div class="topbar"><div><h2>Daily sales</h2><p>Record all payments received today</p></div></div>
+      <div class="topbar"><div><div class="page-title">Daily sales</div><div class="page-sub">Record all payments received today</div></div></div>
       <div class="card">
-        <div class="card-header"><h3>Today's entries</h3></div>
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;margin-bottom:6px;padding:0 4px">
-          <span style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Description</span>
-          <span style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Category</span>
-          <span style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Amount (GHS)</span>
+        <div class="card-header"><div class="card-title">Today's entries</div></div>
+        <div class="sales-row" style="margin-bottom:6px">
+          <span style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em">Description</span>
+          <span style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em">Category</span>
+          <span style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em">Amount (GHS)</span>
           <span></span>
         </div>
         <div id="sales-items"></div>
-        <button class="btn" onclick="addSalesItem()" style="margin-top:10px;font-size:13px">+ Add item</button>
-        <div class="total-strip">
-          <span class="lbl">Total today</span>
-          <span class="amt" id="sales-total">GHS 0.00</span>
-        </div>
+        <button class="btn sm" onclick="addSalesItem()" style="margin-top:8px">+ Add item</button>
+        <div class="total-strip"><span class="ts-label">Total today</span><span class="ts-val" id="sales-total">GHS 0.00</span></div>
         <div class="btn-row">
           <button class="btn primary" onclick="saveSales()">Save today's sales</button>
           <button class="btn" onclick="clearSalesItems()">Clear</button>
         </div>
       </div>
       <div class="card">
-        <div class="card-header"><h3>Sales history</h3></div>
-        <table>
+        <div class="card-header"><div class="card-title">Sales history</div></div>
+        <div class="table-wrap"><table>
           <thead><tr><th>Date</th><th>Items</th><th>Total</th></tr></thead>
-          <tbody id="sales-history-table"><tr class="empty-row"><td colspan="3">No sales recorded yet</td></tr></tbody>
-        </table>
+          <tbody id="sales-history-table"><tr><td colspan="3" class="empty-state">No sales recorded yet</td></tr></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- WEEKLY REPORT -->
+    <!-- REPORT -->
     <div id="page-report" class="page">
       <div class="topbar">
-        <div><h2>Weekly report</h2><p>Summary for the current week</p></div>
-        <button class="btn info" onclick="sendWeeklyEmail()">📧 Email report to owner</button>
+        <div><div class="page-title">Weekly report</div><div class="page-sub">Current week summary</div></div>
+        <div class="topbar-right"><button class="btn success" onclick="sendDailyReport()">✉ Send report now</button></div>
       </div>
       <div class="card">
-        <div class="card-header"><h3>Revenue this week</h3></div>
+        <div class="card-header"><div class="card-title">Revenue this week</div></div>
         <div class="week-chart" id="week-chart"></div>
-        <div class="metrics" style="margin-top:1rem;margin-bottom:0">
-          <div class="metric"><div class="m-label">Week total</div><div class="m-val green" id="r-total">GHS 0.00</div></div>
+        <div class="metrics" style="margin-bottom:0">
+          <div class="metric"><div class="m-label">Week total</div><div class="m-val gold" id="r-total">GHS 0.00</div></div>
           <div class="metric"><div class="m-label">New bookings</div><div class="m-val" id="r-bookings">0</div></div>
-          <div class="metric"><div class="m-label">Best day</div><div class="m-val" id="r-best">–</div></div>
+          <div class="metric"><div class="m-label">Best day</div><div class="m-val" id="r-best" style="font-size:18px">–</div></div>
           <div class="metric"><div class="m-label">Daily average</div><div class="m-val" id="r-avg">GHS 0.00</div></div>
         </div>
       </div>
       <div class="card">
-        <div class="card-header"><h3>Guests this week</h3></div>
-        <table>
+        <div class="card-header"><div class="card-title">Guests this week</div></div>
+        <div class="table-wrap"><table>
           <thead><tr><th>Guest</th><th>Nationality</th><th>Room</th><th>Nights</th><th>Total paid</th><th>Payment</th><th>Status</th></tr></thead>
-          <tbody id="report-table"><tr class="empty-row"><td colspan="7">No guests this week yet</td></tr></tbody>
-        </table>
+          <tbody id="report-table"><tr><td colspan="7" class="empty-state">No guests this week yet</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- CHECKOUTS SOON -->
+    <div id="page-checkout" class="page">
+      <div class="topbar"><div><div class="page-title">Check-outs soon</div><div class="page-sub">Guests leaving in the next 3 days</div></div></div>
+      <div class="card"><div id="co-list"><div class="empty-state">No upcoming check-outs in 3 days 🎉</div></div></div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Past guests</div></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Guest</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Nights</th><th>Total</th></tr></thead>
+          <tbody id="past-table"><tr><td colspan="6" class="empty-state">No past guests yet</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div id="page-search" class="page">
+      <div class="topbar"><div><div class="page-title">Guest search</div><div class="page-sub">Find any guest by name, phone, room or nationality</div></div></div>
+      <div class="card">
+        <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Type guest name, phone, room..." oninput="doSearch()"></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Guest</th><th>Nationality</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Total</th><th>Status</th><th></th></tr></thead>
+          <tbody id="search-results"><tr><td colspan="8" class="empty-state">Start typing to search</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- OWNER DASHBOARD -->
+    <div id="page-owner" class="page">
+      <div class="owner-header">
+        <div>
+          <div class="owner-title">🔒 Owner Dashboard</div>
+          <div class="owner-sub">Private view — Frank Nyarko only</div>
+        </div>
+        <button class="btn sm danger" onclick="lockOwner()">Lock</button>
+      </div>
+
+      <!-- ALERTS -->
+      <div id="owner-alerts"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.25rem" class="owner-metrics">
+        <div class="metric"><div class="metric-shine"></div><div class="m-label">Total revenue (all time)</div><div class="m-val gold" id="ow-alltime">GHS 0.00</div></div>
+        <div class="metric"><div class="metric-shine"></div><div class="m-label">Total guests (all time)</div><div class="m-val" id="ow-guests">0</div></div>
+        <div class="metric"><div class="metric-shine"></div><div class="m-label">Registered today</div><div class="m-val green" id="ow-today-guests">0</div></div>
+        <div class="metric"><div class="metric-shine"></div><div class="m-label">Sales entered today</div><div class="m-val green" id="ow-today-sales">GHS 0.00</div></div>
+      </div>
+
+      <!-- DISCREPANCY CHECK -->
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">⚠️ Revenue discrepancy check</div><div class="card-sub">Compares what guests paid vs what was entered in daily sales</div></div></div>
+        <div id="discrepancy-list"></div>
+      </div>
+
+      <!-- ROOMS WITH NO ENTRY -->
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">🛏 Occupied rooms — sales check</div><div class="card-sub">Rooms that are occupied but have no sales entry today</div></div></div>
+        <div id="rooms-no-entry"></div>
+      </div>
+
+      <!-- ACTIVITY LOG -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">📋 Activity log</div><div class="card-sub">Everything that happened in the system</div></div>
+        <div id="activity-log"></div>
+      </div>
+
+      <!-- ALL BOOKINGS TABLE -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">All bookings</div><div class="card-sub">Complete unfiltered record</div></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Guest</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Nights</th><th>Rate/night</th><th>Total</th><th>Payment</th><th>Status</th><th>Registered at</th></tr></thead>
+          <tbody id="owner-bookings-table"></tbody>
+        </table></div>
       </div>
     </div>
 
   </main>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-// CONFIG — emails
-const STAFF_EMAIL = 'nyarkofredderick720@gmail.com';
+// ═══════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════
+const EJS_PK  = 'lT7HM1FucVdTVWibv';
+const EJS_SVC = 'service_49af3nf';
+const EJS_TPL = 'template_oexkrwd';
 const OWNER_EMAIL = 'franknyarko81@gmail.com';
+const STAFF_EMAIL = 'nyarkofredderick720@gmail.com';
+const AUTO_HOUR   = 21;
+const OWNER_PIN   = '1984'; // ← DAD'S SECRET PIN — change this to whatever your dad wants
+// ═══════════════════════════════════════
 
-const ROOMS = [
+const ROOMS=[
   {id:1,name:'Room 1',active:true},{id:2,name:'Room 2',active:true},
   {id:3,name:'Room 3',active:true},{id:4,name:'Room 4',active:true},
   {id:5,name:'Room 5',active:false},{id:6,name:'Room 6',active:false},
@@ -360,193 +645,219 @@ const ROOMS = [
   {id:11,name:'Room 11',active:false}
 ];
 
-let bookings = [], salesHistory = [], salesItems = [];
+let bookings=[], salesHistory=[], activityLog=[], salesItems=[];
+let ownerUnlocked=false, pinEntry='';
 
-function load() {
-  try {
-    const b = localStorage.getItem('ghm_bookings');
-    const s = localStorage.getItem('ghm_sales');
-    if (b) bookings = JSON.parse(b);
-    if (s) salesHistory = JSON.parse(s);
-  } catch(e) {}
+// ── STORAGE ──────────────────────────
+function load(){
+  try{
+    const b=localStorage.getItem('fgh_bk'),s=localStorage.getItem('fgh_sl'),a=localStorage.getItem('fgh_al');
+    if(b)bookings=JSON.parse(b);
+    if(s)salesHistory=JSON.parse(s);
+    if(a)activityLog=JSON.parse(a);
+  }catch(e){}
 }
-function save() {
-  try {
-    localStorage.setItem('ghm_bookings', JSON.stringify(bookings));
-    localStorage.setItem('ghm_sales', JSON.stringify(salesHistory));
-  } catch(e) {}
+function save(){
+  try{
+    localStorage.setItem('fgh_bk',JSON.stringify(bookings));
+    localStorage.setItem('fgh_sl',JSON.stringify(salesHistory));
+    localStorage.setItem('fgh_al',JSON.stringify(activityLog));
+  }catch(e){}
 }
-
-function toast(msg, color) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.background = color || '#1A7A52';
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
-}
-
-function showPage(name, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  if (el) el.classList.add('active');
-  if (name === 'dashboard') renderDashboard();
-  if (name === 'register') initRegisterForm();
-  if (name === 'rooms') renderRooms();
-  if (name === 'sales') renderSalesTab();
-  if (name === 'report') renderReport();
-}
-
-function getToday() { return new Date().toISOString().split('T')[0]; }
-function fmtDate(d) { if (!d) return '–'; return new Date(d + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}); }
-function fmtGHS(n) { return 'GHS ' + Number(n || 0).toFixed(2); }
-function nights(a, b) { if (!a || !b) return 0; return Math.max(0, Math.round((new Date(b) - new Date(a)) / 86400000)); }
-function isActive(b) { const t = getToday(); return b.checkin <= t && b.checkout > t && b.active !== false; }
-function isThisWeek(d) {
-  const dt = new Date(d + 'T00:00:00'), now = new Date();
-  const s = new Date(now); s.setDate(now.getDate() - now.getDay()); s.setHours(0,0,0,0);
-  const e = new Date(s); e.setDate(s.getDate() + 7);
-  return dt >= s && dt < e;
-}
-
-// DASHBOARD
-function renderDashboard() {
-  const active = bookings.filter(isActive);
-  const occ = new Set(active.map(b => b.room)).size;
-  const todayRev = salesHistory.filter(s => s.date === getToday()).reduce((s, d) => s + d.total, 0);
-  const weekRev = salesHistory.filter(s => isThisWeek(s.date)).reduce((s, d) => s + d.total, 0);
-  document.getElementById('d-occ').textContent = occ + ' / 4';
-  document.getElementById('d-guests').textContent = active.length;
-  document.getElementById('d-today').textContent = fmtGHS(todayRev);
-  document.getElementById('d-week').textContent = fmtGHS(weekRev);
-  const tb = document.getElementById('active-table');
-  if (!active.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="8">No active guests right now</td></tr>'; return; }
-  tb.innerHTML = active.map(b => `<tr>
-    <td><strong>${b.name}</strong><br><span style="font-size:11px;color:var(--text3)">${b.phone}</span></td>
-    <td>${b.nationality}</td>
-    <td>${b.room}</td>
-    <td style="font-size:12px">${b.adults} adult${b.adults>1?'s':''}${b.kids>0?', '+b.kids+' child'+(b.kids>1?'ren':''):''}</td>
-    <td>${fmtDate(b.checkin)}</td>
-    <td>${fmtDate(b.checkout)}</td>
-    <td><strong>${fmtGHS(b.total)}</strong></td>
-    <td><button class="btn danger sm" onclick="checkOut(${b.id})">Check out</button></td>
-  </tr>`).join('');
-}
-
-function checkOut(id) {
-  const b = bookings.find(x => x.id === id);
-  if (b) { b.active = false; save(); toast(b.name + ' checked out successfully'); renderDashboard(); }
-}
-
-// REGISTER
-function calcTotal() {
-  const ci = document.getElementById('r-checkin').value;
-  const co = document.getElementById('r-checkout').value;
-  const rate = Number(document.getElementById('r-rate').value) || 0;
-  const n = nights(ci, co);
-  const total = n * rate;
-  document.getElementById('calc-nights-label').textContent = n > 0 ? n + ' night' + (n > 1 ? 's' : '') : 'Select dates and rate to calculate';
-  document.getElementById('calc-breakdown').textContent = n > 0 && rate > 0 ? n + ' nights × GHS ' + rate.toFixed(2) + ' per night' : '';
-  document.getElementById('calc-total').textContent = fmtGHS(total);
-}
-
-function initRegisterForm() {
-  const active = bookings.filter(isActive);
-  const occ = new Set(active.map(b => b.room));
-  const sel = document.getElementById('r-room');
-  const available = ROOMS.filter(r => r.active && !occ.has(r.name));
-  sel.innerHTML = available.length ? available.map(r => `<option value="${r.name}">${r.name}</option>`).join('') : '<option disabled>No rooms available</option>';
-  const today = getToday();
-  document.getElementById('r-checkin').value = today;
-  const tom = new Date(); tom.setDate(tom.getDate() + 1);
-  document.getElementById('r-checkout').value = tom.toISOString().split('T')[0];
-  calcTotal();
-}
-
-function registerGuest() {
-  const name = document.getElementById('r-name').value.trim();
-  const phone = document.getElementById('r-phone').value.trim();
-  const nationality = document.getElementById('r-nationality').value.trim();
-  const idnum = document.getElementById('r-id').value.trim();
-  const ecname = document.getElementById('r-ecname').value.trim();
-  const ecphone = document.getElementById('r-ecphone').value.trim();
-  const adults = Number(document.getElementById('r-adults').value) || 1;
-  const kids = Number(document.getElementById('r-kids').value) || 0;
-  const room = document.getElementById('r-room').value;
-  const checkin = document.getElementById('r-checkin').value;
-  const checkout = document.getElementById('r-checkout').value;
-  const rate = Number(document.getElementById('r-rate').value);
-  const payment = document.getElementById('r-payment').value;
-  const notes = document.getElementById('r-notes').value.trim();
-
-  if (!name || !phone || !nationality || !ecname || !ecphone || !room || !checkin || !checkout || !rate) {
-    toast('Please fill all required fields (*)', '#C0392B'); return;
-  }
-  if (checkout <= checkin) { toast('Check-out must be after check-in', '#C0392B'); return; }
-
-  const n = nights(checkin, checkout);
-  const total = n * rate;
-
-  bookings.push({ id: Date.now(), name, phone, nationality, idnum, ecname, ecphone, adults, kids, room, checkin, checkout, rate, nights: n, total, payment, notes, active: true });
+function logActivity(msg,type){
+  activityLog.unshift({msg,type:type||'blue',time:new Date().toISOString()});
+  if(activityLog.length>100)activityLog=activityLog.slice(0,100);
   save();
-  toast('✓ ' + name + ' registered in ' + room + ' — ' + fmtGHS(total));
-  clearRegForm();
-  initRegisterForm();
 }
 
-function clearRegForm() {
-  ['r-name','r-phone','r-nationality','r-id','r-ecname','r-ecphone','r-notes'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('r-adults').value = 1;
-  document.getElementById('r-kids').value = 0;
-  document.getElementById('r-rate').value = '';
-  calcTotal();
+// ── THEME ────────────────────────────
+function toggleTheme(){
+  const html=document.documentElement,isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  document.getElementById('theme-label').textContent=isDark?'Light mode':'Dark mode';
+  localStorage.setItem('fgh_theme',isDark?'light':'dark');
 }
 
-// ROOMS
-function renderRooms() {
-  const active = bookings.filter(isActive);
-  const occ = new Set(active.map(b => b.room));
-  document.getElementById('rooms-grid').innerHTML = ROOMS.map(r => {
-    if (!r.active) return `<div class="room-tile soon"><div class="room-num">${r.id}</div><div class="room-status">Coming soon</div></div>`;
-    const o = occ.has(r.name);
-    const guest = o ? active.find(b => b.room === r.name) : null;
-    return `<div class="room-tile ${o ? 'occupied' : 'available'}">
-      <div class="room-num">${r.id}</div>
-      <div class="room-status">${o ? 'Occupied' : 'Available'}</div>
-      ${guest ? `<div class="room-guest">${guest.name.split(' ')[0]}</div>` : ''}
-    </div>`;
-  }).join('');
+// ── SIDEBAR ──────────────────────────
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('open');}
 
-  const tb = document.getElementById('all-guests-table');
-  if (!bookings.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="10">No guest records yet</td></tr>'; return; }
-  tb.innerHTML = [...bookings].sort((a,b) => b.checkin.localeCompare(a.checkin)).map(b => `<tr>
-    <td><strong>${b.name}</strong><br><span style="font-size:11px;color:var(--text3)">${b.phone}</span></td>
-    <td>${b.nationality}</td>
-    <td style="font-size:12px;color:var(--text3)">${b.idnum || '–'}</td>
-    <td>${b.room}</td>
-    <td>${fmtDate(b.checkin)}</td>
-    <td>${fmtDate(b.checkout)}</td>
-    <td>${b.nights}</td>
-    <td><strong>${fmtGHS(b.total)}</strong></td>
-    <td>${b.payment}</td>
-    <td><span class="badge ${isActive(b)?'green':b.active===false?'amber':'blue'}">${isActive(b)?'Active':b.active===false?'Checked out':'Upcoming'}</span></td>
+// ── TOAST ────────────────────────────
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast t-'+(type||'info')+' show';
+  setTimeout(()=>t.classList.remove('show'),3800);
+}
+
+// ── NAVIGATION ───────────────────────
+function showPage(name,el){
+  if(name==='owner'&&!ownerUnlocked){openPinScreen();return;}
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(el)el.classList.add('active');
+  closeSidebar();
+  ({
+    dashboard:renderDashboard,register:initRegisterForm,rooms:renderRooms,
+    sales:renderSalesTab,report:renderReport,checkout:renderCheckoutSoon,
+    search:()=>{},owner:renderOwnerDashboard
+  }[name]||function(){})();
+}
+
+// ── HELPERS ──────────────────────────
+function getToday(){return new Date().toISOString().split('T')[0];}
+function fmtDate(d){if(!d)return'–';return new Date(d+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
+function fmtGHS(n){return'GHS '+Number(n||0).toFixed(2);}
+function nts(a,b){if(!a||!b)return 0;return Math.max(0,Math.round((new Date(b)-new Date(a))/86400000));}
+function isActive(b){const t=getToday();return b.checkin<=t&&b.checkout>t&&b.active!==false;}
+function isThisWeek(d){const dt=new Date(d+'T00:00:00'),now=new Date(),s=new Date(now);s.setDate(now.getDate()-now.getDay());s.setHours(0,0,0,0);const e=new Date(s);e.setDate(s.getDate()+7);return dt>=s&&dt<e;}
+function daysUntil(d){return Math.round((new Date(d+'T00:00:00')-new Date())/(1000*60*60*24));}
+function initials(n){return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function fmtTime(iso){return new Date(iso).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}
+
+// ── CLOCK ────────────────────────────
+function updateClock(){
+  const t=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  ['topTime','mobileTime'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t;});
+}
+
+// ── BADGE / BANNERS ───────────────────
+function updateBadges(){
+  const soon=bookings.filter(b=>isActive(b)&&daysUntil(b.checkout)<=3&&daysUntil(b.checkout)>=0);
+  const badge=document.getElementById('co-badge');if(badge)badge.textContent=soon.length;
+  const ban=document.getElementById('co-banner'),banText=document.getElementById('co-banner-text');
+  if(ban&&banText){ban.style.display=soon.length?'flex':'none';if(soon.length)banText.textContent=soon.length+' guest'+(soon.length>1?'s':'')+' checking out within 3 days';}
+  document.getElementById('auto-banner').style.display='flex';
+}
+
+// ── DASHBOARD ────────────────────────
+function renderDashboard(){
+  const active=bookings.filter(isActive),occ=new Set(active.map(b=>b.room)).size;
+  const todayRev=salesHistory.filter(s=>s.date===getToday()).reduce((s,d)=>s+d.total,0);
+  const weekRev=salesHistory.filter(s=>isThisWeek(s.date)).reduce((s,d)=>s+d.total,0);
+  document.getElementById('d-occ').textContent=occ+' / 4';
+  document.getElementById('d-guests').textContent=active.length;
+  document.getElementById('d-today').textContent=fmtGHS(todayRev);
+  document.getElementById('d-week').textContent=fmtGHS(weekRev);
+  updateBadges();
+  const tb=document.getElementById('active-table');
+  if(!active.length){tb.innerHTML='<tr><td colspan="7" class="empty-state">No active guests right now</td></tr>';return;}
+  tb.innerHTML=active.map(b=>`<tr>
+    <td><div class="g-name">${b.name}</div><div class="g-phone">${b.phone}</div></td>
+    <td>${b.nationality}</td><td><span class="badge gold">${b.room}</span></td>
+    <td>${fmtDate(b.checkin)}</td><td>${fmtDate(b.checkout)}</td>
+    <td style="font-weight:700;color:var(--green)">${fmtGHS(b.total)}</td>
+    <td style="display:flex;gap:5px;flex-wrap:wrap">
+      <button class="btn danger sm" onclick="checkOut(${b.id})">Check out</button>
+      <button class="btn sm" onclick="showReceipt(${b.id})">Receipt</button>
+    </td>
   </tr>`).join('');
 }
 
-// SALES
-function addSalesItem() {
-  salesItems.push({ id: Date.now(), desc: '', cat: 'Room payment', amount: '' });
-  renderSalesItems();
+function checkOut(id){
+  const b=bookings.find(x=>x.id===id);
+  if(!b)return;
+  b.active=false;
+  logActivity(b.name+' checked out of '+b.room,'amber');
+  save();showToast(b.name+' checked out successfully','success');renderDashboard();
 }
-function removeSalesItem(id) { salesItems = salesItems.filter(s => s.id !== id); renderSalesItems(); }
-function updateSI(id, field, val) { const i = salesItems.find(s => s.id === id); if (i) i[field] = val; updateSalesTotal(); }
-function updateSalesTotal() {
-  const t = salesItems.reduce((s, i) => s + Number(i.amount || 0), 0);
-  document.getElementById('sales-total').textContent = fmtGHS(t);
+
+// ── RECEIPT ──────────────────────────
+function showReceipt(id){
+  const b=bookings.find(x=>x.id===id);if(!b)return;
+  document.getElementById('receipt-date').textContent='Issued: '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('receipt-content').innerHTML=`
+    <div class="receipt-row"><span class="rl">Guest name</span><span class="rv">${b.name}</span></div>
+    <div class="receipt-row"><span class="rl">Nationality</span><span class="rv">${b.nationality}</span></div>
+    ${b.idnum?`<div class="receipt-row"><span class="rl">ID / Passport</span><span class="rv">${b.idnum}</span></div>`:''}
+    <div class="receipt-row"><span class="rl">Phone</span><span class="rv">${b.phone}</span></div>
+    <div class="receipt-row"><span class="rl">Room</span><span class="rv">${b.room}</span></div>
+    <div class="receipt-row"><span class="rl">Guests</span><span class="rv">${b.adults} adult${b.adults>1?'s':''}${b.kids>0?', '+b.kids+' child'+(b.kids>1?'ren':''):''}</span></div>
+    <div class="receipt-row"><span class="rl">Check-in</span><span class="rv">${fmtDate(b.checkin)}</span></div>
+    <div class="receipt-row"><span class="rl">Check-out</span><span class="rv">${fmtDate(b.checkout)}</span></div>
+    <div class="receipt-row"><span class="rl">Duration</span><span class="rv">${b.nights} night${b.nights>1?'s':''}</span></div>
+    <div class="receipt-row"><span class="rl">Rate per night</span><span class="rv">${fmtGHS(b.rate)}</span></div>
+    <div class="receipt-row"><span class="rl">Payment method</span><span class="rv">${b.payment}</span></div>
+    <div class="receipt-total"><span class="rl">Total paid</span><span class="rv">${fmtGHS(b.total)}</span></div>`;
+  document.getElementById('receipt-modal').classList.add('open');
 }
-function renderSalesItems() {
-  document.getElementById('sales-items').innerHTML = salesItems.map(item => `
-    <div class="sales-item-row">
+
+// ── REGISTER ─────────────────────────
+function calcTotal(){
+  const ci=document.getElementById('r-checkin').value,co=document.getElementById('r-checkout').value;
+  const rate=Number(document.getElementById('r-rate').value)||0,n=nts(ci,co),total=n*rate;
+  document.getElementById('calc-lbl').textContent=n>0?n+' night'+(n>1?'s':'')+' stay':'Select dates and rate to calculate';
+  document.getElementById('calc-breakdown').textContent=n>0&&rate>0?n+' nights × GHS '+rate.toFixed(2)+' per night':'';
+  document.getElementById('calc-total').textContent=fmtGHS(total);
+}
+function initRegisterForm(){
+  const occ=new Set(bookings.filter(isActive).map(b=>b.room));
+  const sel=document.getElementById('r-room'),avail=ROOMS.filter(r=>r.active&&!occ.has(r.name));
+  sel.innerHTML=avail.length?avail.map(r=>`<option value="${r.name}">${r.name}</option>`).join(''):'<option disabled>No rooms available</option>';
+  document.getElementById('r-checkin').value=getToday();
+  const tom=new Date();tom.setDate(tom.getDate()+1);
+  document.getElementById('r-checkout').value=tom.toISOString().split('T')[0];
+  calcTotal();
+}
+function registerGuest(){
+  const name=document.getElementById('r-name').value.trim();
+  const phone=document.getElementById('r-phone').value.trim();
+  const nationality=document.getElementById('r-nationality').value.trim();
+  const idnum=document.getElementById('r-id').value.trim();
+  const ecname=document.getElementById('r-ecname').value.trim();
+  const ecphone=document.getElementById('r-ecphone').value.trim();
+  const adults=Number(document.getElementById('r-adults').value)||1;
+  const kids=Number(document.getElementById('r-kids').value)||0;
+  const room=document.getElementById('r-room').value;
+  const checkin=document.getElementById('r-checkin').value;
+  const checkout=document.getElementById('r-checkout').value;
+  const rate=Number(document.getElementById('r-rate').value);
+  const payment=document.getElementById('r-payment').value;
+  const notes=document.getElementById('r-notes').value.trim();
+  if(!name||!phone||!nationality||!ecname||!ecphone||!room||!checkin||!checkout||!rate){showToast('Please fill all required fields (*)','error');return;}
+  if(checkout<=checkin){showToast('Check-out must be after check-in','error');return;}
+  const n=nts(checkin,checkout),total=n*rate;
+  const entry={id:Date.now(),name,phone,nationality,idnum,ecname,ecphone,adults,kids,room,checkin,checkout,rate,nights:n,total,payment,notes,active:true,registeredAt:new Date().toISOString()};
+  bookings.push(entry);
+  logActivity(name+' registered in '+room+' — '+fmtGHS(total)+' ('+payment+')','green');
+  save();
+  showToast('✓ '+name+' registered in '+room+' — '+fmtGHS(total),'success');
+  clearRegForm();initRegisterForm();updateBadges();
+}
+function clearRegForm(){
+  ['r-name','r-phone','r-nationality','r-id','r-ecname','r-ecphone','r-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('r-adults').value=1;document.getElementById('r-kids').value=0;document.getElementById('r-rate').value='';calcTotal();
+}
+
+// ── ROOMS ────────────────────────────
+function renderRooms(){
+  const active=bookings.filter(isActive),occ=new Set(active.map(b=>b.room));
+  document.getElementById('rooms-grid').innerHTML=ROOMS.map(r=>{
+    if(!r.active)return`<div class="room-tile soon"><div class="room-num">${r.id}</div><div class="room-status">Soon</div></div>`;
+    const o=occ.has(r.name),g=o?active.find(b=>b.room===r.name):null;
+    return`<div class="room-tile ${o?'occupied':'available'}"><div class="room-num">${r.id}</div><div class="room-status">${o?'Occupied':'Free'}</div>${g?`<div class="room-guest">${g.name.split(' ')[0]}</div>`:''}</div>`;
+  }).join('');
+  const tb=document.getElementById('all-guests-table');
+  if(!bookings.length){tb.innerHTML='<tr><td colspan="11" class="empty-state">No guest records yet</td></tr>';return;}
+  tb.innerHTML=[...bookings].sort((a,b)=>b.checkin.localeCompare(a.checkin)).map(b=>`<tr>
+    <td><div class="g-name">${b.name}</div><div class="g-phone">${b.phone}</div></td>
+    <td>${b.nationality}</td><td style="font-size:11px;color:var(--text3)">${b.idnum||'–'}</td>
+    <td><span class="badge gold">${b.room}</span></td>
+    <td>${fmtDate(b.checkin)}</td><td>${fmtDate(b.checkout)}</td><td>${b.nights}</td>
+    <td style="font-weight:700">${fmtGHS(b.total)}</td><td>${b.payment}</td>
+    <td><span class="badge ${isActive(b)?'green':b.active===false?'amber':'blue'}">${isActive(b)?'Active':b.active===false?'Checked out':'Upcoming'}</span></td>
+    <td><button class="btn sm" onclick="showReceipt(${b.id})">Receipt</button></td>
+  </tr>`).join('');
+}
+
+// ── SALES ────────────────────────────
+function addSalesItem(){salesItems.push({id:Date.now(),desc:'',cat:'Room payment',amount:''});renderSalesItems();}
+function removeSalesItem(id){salesItems=salesItems.filter(s=>s.id!==id);renderSalesItems();}
+function updateSI(id,f,v){const i=salesItems.find(s=>s.id===id);if(i)i[f]=v;updateSalesTotal();}
+function updateSalesTotal(){document.getElementById('sales-total').textContent=fmtGHS(salesItems.reduce((s,i)=>s+Number(i.amount||0),0));}
+function renderSalesItems(){
+  document.getElementById('sales-items').innerHTML=salesItems.map(item=>`
+    <div class="sales-row">
       <input type="text" placeholder="e.g. Room 1 payment" value="${item.desc}" oninput="updateSI(${item.id},'desc',this.value)">
       <select onchange="updateSI(${item.id},'cat',this.value)">
         <option ${item.cat==='Room payment'?'selected':''}>Room payment</option>
@@ -559,130 +870,293 @@ function renderSalesItems() {
     </div>`).join('');
   updateSalesTotal();
 }
-function saveSales() {
-  if (!salesItems.length) { toast('Add at least one item first', '#C0392B'); return; }
-  const total = salesItems.reduce((s, i) => s + Number(i.amount || 0), 0);
-  const today = getToday();
-  const idx = salesHistory.findIndex(s => s.date === today);
-  const entry = { date: today, items: [...salesItems], total };
-  if (idx >= 0) salesHistory[idx] = entry; else salesHistory.push(entry);
-  save();
-  toast('Sales saved — ' + fmtGHS(total));
-  renderSalesHistory();
+function saveSales(){
+  if(!salesItems.length){showToast('Add at least one item first','error');return;}
+  const total=salesItems.reduce((s,i)=>s+Number(i.amount||0),0),today=getToday();
+  const idx=salesHistory.findIndex(s=>s.date===today),entry={date:today,items:[...salesItems],total};
+  if(idx>=0)salesHistory[idx]=entry;else salesHistory.push(entry);
+  logActivity('Daily sales saved — '+fmtGHS(total),'green');
+  save();showToast('Sales saved — '+fmtGHS(total),'success');renderSalesHistory();
 }
-function clearSalesItems() { salesItems = []; renderSalesItems(); }
-function renderSalesTab() { renderSalesItems(); renderSalesHistory(); }
-function renderSalesHistory() {
-  const tb = document.getElementById('sales-history-table');
-  if (!salesHistory.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="3">No sales recorded yet</td></tr>'; return; }
-  tb.innerHTML = [...salesHistory].sort((a,b) => b.date.localeCompare(a.date)).map(s => `
-    <tr><td>${fmtDate(s.date)}</td>
-    <td style="font-size:12px;color:var(--text3)">${s.items.map(i => i.desc || i.cat).join(', ')}</td>
-    <td><strong>${fmtGHS(s.total)}</strong></td></tr>`).join('');
+function clearSalesItems(){salesItems=[];renderSalesItems();}
+function renderSalesTab(){renderSalesItems();renderSalesHistory();}
+function renderSalesHistory(){
+  const tb=document.getElementById('sales-history-table');
+  if(!salesHistory.length){tb.innerHTML='<tr><td colspan="3" class="empty-state">No sales recorded yet</td></tr>';return;}
+  tb.innerHTML=[...salesHistory].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>`
+    <tr><td>${fmtDate(s.date)}</td><td style="font-size:11px;color:var(--text3)">${s.items.map(i=>i.desc||i.cat).join(', ')}</td><td style="font-weight:700;color:var(--green)">${fmtGHS(s.total)}</td></tr>`).join('');
 }
 
-// REPORT
-function renderReport() {
-  const DAY_LABELS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const now = new Date();
-  const sow = new Date(now); sow.setDate(now.getDate() - now.getDay()); sow.setHours(0,0,0,0);
-  const weekDays = Array.from({length:7}, (_,i) => { const d = new Date(sow); d.setDate(sow.getDate()+i); return d.toISOString().split('T')[0]; });
-  const dayTotals = weekDays.map(date => {
-    const e = salesHistory.find(s => s.date === date);
-    return { date, total: e ? e.total : 0, label: DAY_LABELS[new Date(date+'T00:00:00').getDay()] };
-  });
-  const weekTotal = dayTotals.reduce((s,d) => s+d.total, 0);
-  const maxDay = Math.max(...dayTotals.map(d => d.total), 1);
-  const best = dayTotals.reduce((a,b) => b.total > a.total ? b : a);
-  const wb = bookings.filter(b => isThisWeek(b.checkin));
-
-  document.getElementById('r-total').textContent = fmtGHS(weekTotal);
-  document.getElementById('r-bookings').textContent = wb.length;
-  document.getElementById('r-best').textContent = best.total > 0 ? (best.label + ' (' + fmtGHS(best.total) + ')') : '–';
-  document.getElementById('r-avg').textContent = fmtGHS(weekTotal / 7);
-
-  document.getElementById('week-chart').innerHTML = dayTotals.map(d => `
-    <div class="wc-col">
-      <div class="wc-val">${d.total > 0 ? fmtGHS(d.total) : ''}</div>
-      <div class="wc-bar" style="height:${Math.max(4,(d.total/maxDay)*100)}px"></div>
-      <div class="wc-lbl">${d.label}</div>
-    </div>`).join('');
-
-  const rt = document.getElementById('report-table');
-  if (!wb.length) { rt.innerHTML = '<tr class="empty-row"><td colspan="7">No guests registered this week yet</td></tr>'; return; }
-  rt.innerHTML = wb.map(b => `<tr>
-    <td><strong>${b.name}</strong><br><span style="font-size:11px;color:var(--text3)">${b.phone}</span></td>
-    <td>${b.nationality}</td><td>${b.room}</td><td>${b.nights}</td>
-    <td><strong>${fmtGHS(b.total)}</strong></td><td>${b.payment}</td>
+// ── REPORT ───────────────────────────
+function renderReport(){
+  const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],now=new Date();
+  const sow=new Date(now);sow.setDate(now.getDate()-now.getDay());sow.setHours(0,0,0,0);
+  const weekDays=Array.from({length:7},(_,i)=>{const d=new Date(sow);d.setDate(sow.getDate()+i);return d.toISOString().split('T')[0];});
+  const dayTotals=weekDays.map(date=>{const e=salesHistory.find(s=>s.date===date);return{date,total:e?e.total:0,label:DAYS[new Date(date+'T00:00:00').getDay()]};});
+  const weekTotal=dayTotals.reduce((s,d)=>s+d.total,0),maxDay=Math.max(...dayTotals.map(d=>d.total),1);
+  const best=dayTotals.reduce((a,b)=>b.total>a.total?b:a),wb=bookings.filter(b=>isThisWeek(b.checkin));
+  document.getElementById('r-total').textContent=fmtGHS(weekTotal);
+  document.getElementById('r-bookings').textContent=wb.length;
+  document.getElementById('r-best').textContent=best.total>0?best.label:'-';
+  document.getElementById('r-avg').textContent=fmtGHS(weekTotal/7);
+  document.getElementById('week-chart').innerHTML=dayTotals.map(d=>`
+    <div class="wc-col"><div class="wc-val">${d.total>0?fmtGHS(d.total):''}</div>
+    <div class="wc-bar${d.total===0?' empty':''}" style="height:${Math.max(4,(d.total/maxDay)*100)}px"></div>
+    <div class="wc-lbl">${d.label}</div></div>`).join('');
+  const rt=document.getElementById('report-table');
+  if(!wb.length){rt.innerHTML='<tr><td colspan="7" class="empty-state">No guests this week yet</td></tr>';return;}
+  rt.innerHTML=wb.map(b=>`<tr>
+    <td><div class="g-name">${b.name}</div><div class="g-phone">${b.phone}</div></td>
+    <td>${b.nationality}</td><td><span class="badge gold">${b.room}</span></td><td>${b.nights}</td>
+    <td style="font-weight:700;color:var(--green)">${fmtGHS(b.total)}</td><td>${b.payment}</td>
     <td><span class="badge ${isActive(b)?'green':'amber'}">${isActive(b)?'Active':'Checked out'}</span></td>
   </tr>`).join('');
 }
 
-// EMAIL
-function buildReport() {
-  const now = new Date();
-  const sow = new Date(now); sow.setDate(now.getDate() - now.getDay()); sow.setHours(0,0,0,0);
-  const weekDays = Array.from({length:7}, (_,i) => { const d = new Date(sow); d.setDate(sow.getDate()+i); return d.toISOString().split('T')[0]; });
-  const weekTotal = salesHistory.filter(s => weekDays.includes(s.date)).reduce((s,d) => s+d.total, 0);
-  const wb = bookings.filter(b => isThisWeek(b.checkin));
-  const active = bookings.filter(isActive);
-  const DAY_LABELS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+// ── CHECKOUT SOON ────────────────────
+function renderCheckoutSoon(){
+  const soon=bookings.filter(b=>isActive(b)&&daysUntil(b.checkout)<=3&&daysUntil(b.checkout)>=0).sort((a,b)=>a.checkout.localeCompare(b.checkout));
+  const list=document.getElementById('co-list');
+  list.innerHTML=soon.length?soon.map(b=>{
+    const d=daysUntil(b.checkout),lbl=d===0?'Today!':d===1?'Tomorrow':d+' days';
+    return`<div class="co-item"><div style="display:flex;align-items:center;gap:10px"><div class="co-avatar">${initials(b.name)}</div><div><div class="co-name">${b.name}</div><div class="co-info">${b.room} · ${b.nationality}</div></div></div><div style="text-align:right"><div style="font-weight:700;color:var(--amber);font-size:13px">${lbl}</div><div style="font-size:11px;color:var(--text3)">${fmtDate(b.checkout)}</div></div></div>`;
+  }).join(''):'<div class="empty-state">No upcoming check-outs in 3 days 🎉</div>';
+  const past=bookings.filter(b=>b.active===false).sort((a,b)=>b.checkout.localeCompare(a.checkout));
+  const tb=document.getElementById('past-table');
+  tb.innerHTML=past.length?past.map(b=>`<tr><td><div class="g-name">${b.name}</div><div class="g-phone">${b.phone}</div></td><td><span class="badge gold">${b.room}</span></td><td>${fmtDate(b.checkin)}</td><td>${fmtDate(b.checkout)}</td><td>${b.nights}</td><td style="font-weight:700">${fmtGHS(b.total)}</td></tr>`).join(''):'<tr><td colspan="6" class="empty-state">No past guests yet</td></tr>';
+}
 
-  let txt = 'FRANTREESA GUEST HOUSE — WEEKLY REPORT\n';
-  txt += '='.repeat(40) + '\n';
-  txt += `Week: ${fmtDate(weekDays[0])} to ${fmtDate(weekDays[6])}\n`;
-  txt += `Generated: ${new Date().toLocaleString('en-GB')}\n`;
-  txt += `Prepared by: Frederick Nyarko\n\n`;
-  txt += 'SUMMARY\n' + '-'.repeat(30) + '\n';
-  txt += `Total revenue this week:   ${fmtGHS(weekTotal)}\n`;
-  txt += `New guest registrations:   ${wb.length}\n`;
-  txt += `Guests currently staying:  ${active.length}\n\n`;
-  txt += 'DAILY REVENUE BREAKDOWN\n' + '-'.repeat(30) + '\n';
-  weekDays.forEach(date => {
-    const e = salesHistory.find(s => s.date === date);
-    const lbl = new Date(date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-    txt += `${lbl.padEnd(16)} ${e ? fmtGHS(e.total) : 'GHS 0.00'}\n`;
+// ── SEARCH ───────────────────────────
+function doSearch(){
+  const q=document.getElementById('search-input').value.trim().toLowerCase();
+  const tb=document.getElementById('search-results');
+  if(!q){tb.innerHTML='<tr><td colspan="8" class="empty-state">Start typing to search</td></tr>';return;}
+  const res=bookings.filter(b=>[b.name,b.phone,b.room,b.nationality,b.idnum||''].some(f=>f.toLowerCase().includes(q)));
+  tb.innerHTML=res.length?res.map(b=>`<tr>
+    <td><div class="g-name">${b.name}</div><div class="g-phone">${b.phone}</div></td>
+    <td>${b.nationality}</td><td><span class="badge gold">${b.room}</span></td>
+    <td>${fmtDate(b.checkin)}</td><td>${fmtDate(b.checkout)}</td>
+    <td style="font-weight:700">${fmtGHS(b.total)}</td>
+    <td><span class="badge ${isActive(b)?'green':b.active===false?'amber':'blue'}">${isActive(b)?'Active':b.active===false?'Checked out':'Upcoming'}</span></td>
+    <td><button class="btn sm" onclick="showReceipt(${b.id})">Receipt</button></td>
+  </tr>`).join(''):`<tr><td colspan="8" class="empty-state">No guests found matching "${q}"</td></tr>`;
+}
+
+// ══ PIN / OWNER ═══════════════════════
+function openPinScreen(){pinEntry='';updatePinDots();document.getElementById('pin-error').textContent='';document.getElementById('pin-screen').classList.add('open');}
+function closePinScreen(){document.getElementById('pin-screen').classList.remove('open');}
+function pinPress(d){
+  if(pinEntry.length>=4)return;
+  pinEntry+=d;updatePinDots();
+  if(pinEntry.length===4){
+    if(pinEntry===OWNER_PIN){
+      ownerUnlocked=true;
+      closePinScreen();
+      showPage('owner',document.querySelector('.owner-nav'));
+      logActivity('Owner dashboard accessed','amber');
+    } else {
+      document.querySelectorAll('.pin-dot').forEach(el=>el.classList.add('error'));
+      document.getElementById('pin-error').textContent='Incorrect PIN. Try again.';
+      setTimeout(()=>{pinEntry='';updatePinDots();document.querySelectorAll('.pin-dot').forEach(el=>el.classList.remove('error'));},900);
+    }
+  }
+}
+function pinDel(){pinEntry=pinEntry.slice(0,-1);updatePinDots();}
+function updatePinDots(){for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);d.classList.remove('error');d.classList.toggle('filled',i<pinEntry.length);}}
+function lockOwner(){ownerUnlocked=false;showPage('dashboard',document.querySelector('.nav-item'));showToast('Owner dashboard locked','info');}
+
+// ── OWNER DASHBOARD ──────────────────
+function renderOwnerDashboard(){
+  const today=getToday();
+  const todaySalesEntry=salesHistory.find(s=>s.date===today);
+  const todaySalesTotal=todaySalesEntry?todaySalesEntry.total:0;
+  const todayGuests=bookings.filter(b=>b.checkin===today||b.registeredAt?.startsWith(today));
+  const todayExpected=bookings.filter(isActive).reduce((s,b)=>s+(b.rate||0),0);
+  const allTimeRev=bookings.reduce((s,b)=>s+b.total,0);
+  const active=bookings.filter(isActive);
+
+  document.getElementById('ow-alltime').textContent=fmtGHS(allTimeRev);
+  document.getElementById('ow-guests').textContent=bookings.length;
+  document.getElementById('ow-today-guests').textContent=todayGuests.length;
+  document.getElementById('ow-today-sales').textContent=fmtGHS(todaySalesTotal);
+
+  // ALERTS
+  const alertDiv=document.getElementById('owner-alerts');
+  const alerts=[];
+
+  // Check 1: Occupied rooms with no sales today
+  const occupiedRooms=active.map(b=>b.room);
+  if(occupiedRooms.length>0&&!todaySalesEntry){
+    alerts.push({type:'warn',title:'⚠️ No sales entered today',body:`There are ${occupiedRooms.length} occupied room${occupiedRooms.length>1?'s':''} (${occupiedRooms.join(', ')}) but no sales have been entered for today. Workers may have collected payments without recording them.`});
+  }
+
+  // Check 2: Discrepancy between expected and entered
+  if(todaySalesTotal>0&&todayExpected>0){
+    const diff=todayExpected-todaySalesTotal;
+    if(diff>50){
+      alerts.push({type:'warn',title:'⚠️ Possible underreporting detected',body:`Expected at least GHS ${todayExpected.toFixed(2)} from ${active.length} occupied room${active.length>1?'s':''} tonight, but only GHS ${todaySalesTotal.toFixed(2)} was entered. Difference: GHS ${diff.toFixed(2)}. Please verify with staff.`});
+    }
+  }
+
+  if(!alerts.length){
+    alerts.push({type:'ok',title:'✓ No issues detected today',body:'All sales entries look consistent with current occupancy. Everything appears normal.'});
+  }
+
+  alertDiv.innerHTML=alerts.map(a=>`<div class="alert-card ${a.type}"><div class="alert-title">${a.title}</div><div class="alert-body">${a.body}</div></div>`).join('');
+
+  // DISCREPANCY TABLE
+  const disc=document.getElementById('discrepancy-list');
+  const rows=[];
+  const last7=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return d.toISOString().split('T')[0];});
+  last7.forEach(date=>{
+    const dayBookings=bookings.filter(b=>b.checkin<=date&&b.checkout>date&&b.active!==false);
+    const entered=salesHistory.find(s=>s.date===date);
+    const enteredAmt=entered?entered.total:0;
+    const expected=dayBookings.reduce((s,b)=>s+(b.rate||0),0);
+    if(dayBookings.length>0){
+      const diff=expected-enteredAmt;
+      rows.push({date,expected,entered:enteredAmt,diff,rooms:dayBookings.map(b=>b.room).join(', ')});
+    }
   });
-  txt += `\n${'TOTAL'.padEnd(16)} ${fmtGHS(weekTotal)}\n\n`;
-  txt += 'GUEST REGISTRATIONS THIS WEEK\n' + '-'.repeat(30) + '\n';
-  if (!wb.length) { txt += 'No new guests this week.\n'; }
-  wb.forEach((b, i) => {
-    txt += `\n${i+1}. ${b.name}\n`;
-    txt += `   Nationality:       ${b.nationality}\n`;
-    if (b.idnum) txt += `   ID/Passport:      ${b.idnum}\n`;
-    txt += `   Phone:             ${b.phone}\n`;
-    txt += `   Emergency contact: ${b.ecname} — ${b.ecphone}\n`;
-    txt += `   Room:              ${b.room}\n`;
-    txt += `   Check-in:          ${fmtDate(b.checkin)}\n`;
-    txt += `   Check-out:         ${fmtDate(b.checkout)}\n`;
-    txt += `   Nights:            ${b.nights}\n`;
-    txt += `   Rate per night:    ${fmtGHS(b.rate)}\n`;
-    txt += `   Total paid:        ${fmtGHS(b.total)}\n`;
-    txt += `   Payment method:    ${b.payment}\n`;
-    txt += `   Guests:            ${b.adults} adult${b.adults>1?'s':''}${b.kids>0?', '+b.kids+' child'+(b.kids>1?'ren':''):''}\n`;
-    if (b.notes) txt += `   Notes:             ${b.notes}\n`;
-    txt += `   Status:            ${isActive(b)?'Currently staying':'Checked out'}\n`;
+  disc.innerHTML=rows.length?`
+    <div class="gap-row" style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em">
+      <span>Date</span><span>Rooms</span><span>Expected</span><span>Entered</span><span>Gap</span>
+    </div>
+    ${rows.map(r=>`<div class="gap-row">
+      <span class="gap-label">${fmtDate(r.date)}</span>
+      <span style="font-size:12px;color:var(--text3)">${r.rooms}</span>
+      <span class="gap-val">${fmtGHS(r.expected)}</span>
+      <span class="gap-val">${fmtGHS(r.entered)}</span>
+      <span class="gap-val ${r.diff>50?'danger':'safe'}">${r.diff>0?'−'+fmtGHS(r.diff):r.diff<0?'+'+fmtGHS(Math.abs(r.diff)):'✓ Match'}</span>
+    </div>`).join('')}`:'<div class="empty-state">No data to compare yet</div>';
+
+  // ROOMS NO ENTRY
+  const rne=document.getElementById('rooms-no-entry');
+  const noEntry=active.filter(b=>{
+    const todayItems=todaySalesEntry?todaySalesEntry.items:[];
+    return!todayItems.some(i=>(i.desc||'').toLowerCase().includes(b.room.toLowerCase())||i.cat==='Room payment');
   });
-  txt += '\n' + '='.repeat(40) + '\n';
-  txt += 'Frantreesa Guest House — Automated Weekly Report\n';
+  rne.innerHTML=noEntry.length?noEntry.map(b=>`<div class="gap-row"><span class="gap-label">${b.room} — ${b.name}</span><span class="gap-val danger">No entry today</span></div>`).join(''):'<div style="padding:.75rem;font-size:13px;color:var(--green)">✓ All occupied rooms have entries today</div>';
+
+  // ACTIVITY LOG
+  const logDiv=document.getElementById('activity-log');
+  logDiv.innerHTML=activityLog.length?activityLog.slice(0,20).map(l=>`
+    <div class="log-item">
+      <div class="log-dot ${l.type}"></div>
+      <div style="flex:1"><div class="log-msg">${l.msg}</div><div class="log-time">${fmtTime(l.time)}</div></div>
+    </div>`).join(''):'<div class="empty-state">No activity recorded yet</div>';
+
+  // ALL BOOKINGS
+  const tb=document.getElementById('owner-bookings-table');
+  tb.innerHTML=bookings.length?[...bookings].sort((a,b)=>b.registeredAt?.localeCompare(a.registeredAt||'')||0).map(b=>`<tr>
+    <td><div class="g-name">${b.name}</div><div class="g-phone">${b.phone} · ${b.nationality}</div></td>
+    <td><span class="badge gold">${b.room}</span></td>
+    <td>${fmtDate(b.checkin)}</td><td>${fmtDate(b.checkout)}</td>
+    <td>${b.nights}</td><td>${fmtGHS(b.rate)}</td>
+    <td style="font-weight:700;color:var(--green)">${fmtGHS(b.total)}</td>
+    <td>${b.payment}</td>
+    <td><span class="badge ${isActive(b)?'green':b.active===false?'amber':'blue'}">${isActive(b)?'Active':b.active===false?'Checked out':'Upcoming'}</span></td>
+    <td style="font-size:11px;color:var(--text3)">${b.registeredAt?fmtTime(b.registeredAt):'–'}</td>
+  </tr>`).join(''):'<tr><td colspan="10" class="empty-state">No bookings yet</td></tr>';
+}
+
+// ── BUILD REPORT ─────────────────────
+function buildReport(){
+  const now=new Date(),sow=new Date(now);sow.setDate(now.getDate()-now.getDay());sow.setHours(0,0,0,0);
+  const weekDays=Array.from({length:7},(_,i)=>{const d=new Date(sow);d.setDate(sow.getDate()+i);return d.toISOString().split('T')[0];});
+  const weekTotal=salesHistory.filter(s=>weekDays.includes(s.date)).reduce((s,d)=>s+d.total,0);
+  const todayTotal=salesHistory.filter(s=>s.date===getToday()).reduce((s,d)=>s+d.total,0);
+  const todaySales=salesHistory.find(s=>s.date===getToday());
+  const wb=bookings.filter(b=>isThisWeek(b.checkin)),active=bookings.filter(isActive);
+  const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  // Discrepancy check for email
+  const todayActive=bookings.filter(isActive);
+  const todayExpected=todayActive.reduce((s,b)=>s+(b.rate||0),0);
+  const diff=todayExpected-todayTotal;
+  const hasDiscrepancy=diff>50&&todayActive.length>0;
+
+  let txt='FRANTREESA GUEST HOUSE — DAILY REPORT\n'+'='.repeat(50)+'\n';
+  txt+=`Date: ${fmtDate(getToday())} | Time: ${now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}\n\n`;
+  txt+='TODAY\'S SUMMARY\n'+'-'.repeat(40)+'\n';
+  txt+=`Revenue entered today:     ${fmtGHS(todayTotal)}\n`;
+  txt+=`Expected from ${todayActive.length} room${todayActive.length!==1?'s':''}:      ${fmtGHS(todayExpected)}\n`;
+  if(hasDiscrepancy)txt+=`⚠️ GAP DETECTED:           GHS ${diff.toFixed(2)} unaccounted for\n`;
+  else txt+=`✓ No discrepancy detected\n`;
+  txt+=`Total revenue this week:   ${fmtGHS(weekTotal)}\n`;
+  txt+=`New bookings this week:    ${wb.length}\n`;
+  txt+=`Guests currently staying:  ${active.length}\n\n`;
+
+  if(hasDiscrepancy){
+    txt+='⚠️ DISCREPANCY ALERT\n'+'-'.repeat(40)+'\n';
+    txt+=`Expected at least GHS ${todayExpected.toFixed(2)} from occupied rooms tonight\n`;
+    txt+=`Only GHS ${todayTotal.toFixed(2)} was recorded in daily sales.\n`;
+    txt+=`Please check with staff about GHS ${diff.toFixed(2)} difference.\n\n`;
+  }
+
+  txt+='TODAY\'S SALES ENTRIES\n'+'-'.repeat(40)+'\n';
+  if(!todaySales||!todaySales.items.length)txt+='No sales entered today.\n';
+  else todaySales.items.forEach(i=>txt+=`${(i.desc||i.cat).padEnd(25)} GHS ${Number(i.amount||0).toFixed(2)}\n`);
+
+  txt+='\nACTIVE GUESTS RIGHT NOW\n'+'-'.repeat(40)+'\n';
+  if(!active.length)txt+='No guests currently staying.\n';
+  active.forEach((b,i)=>{
+    txt+=`\n${i+1}. ${b.name} (${b.nationality})\n`;
+    txt+=`   Room: ${b.room} | Rate: ${fmtGHS(b.rate)}/night | Check-out: ${fmtDate(b.checkout)}\n`;
+    txt+=`   Emergency: ${b.ecname} — ${b.ecphone}\n`;
+  });
+
+  txt+='\nDAILY BREAKDOWN THIS WEEK\n'+'-'.repeat(40)+'\n';
+  weekDays.forEach(date=>{const e=salesHistory.find(s=>s.date===date),lbl=new Date(date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});txt+=`${lbl.padEnd(18)}${e?fmtGHS(e.total):'GHS 0.00'}\n`;});
+  txt+=`${'WEEK TOTAL'.padEnd(18)}${fmtGHS(weekTotal)}\n`;
+  txt+='\n'+'='.repeat(50)+'\nFrantreesa Guest House — Automated Daily Report\n';
   return txt;
 }
 
-function sendWeeklyEmail() {
-  const report = buildReport();
-  const subject = encodeURIComponent('Frantreesa Guest House — Weekly Report ' + new Date().toLocaleDateString('en-GB'));
-  const body = encodeURIComponent(report);
-  window.open(`mailto:${OWNER_EMAIL}?cc=${STAFF_EMAIL}&subject=${subject}&body=${body}`, '_blank');
-  toast('Email client opened — report ready to send to Dad');
+// ── SEND DAILY REPORT ────────────────
+function sendDailyReport(){
+  const report=buildReport();
+  showToast('Sending report to franknyarko81@gmail.com...','info');
+  emailjs.send(EJS_SVC,EJS_TPL,{
+    to_email:OWNER_EMAIL,
+    subject:'Frantreesa Guest House — Daily Report '+fmtDate(getToday()),
+    report_body:report,
+    date:fmtDate(getToday())
+  }).then(()=>{
+    showToast('✓ Report sent to '+OWNER_EMAIL,'success');
+    localStorage.setItem('fgh_last_report',getToday());
+    logActivity('Daily report emailed to '+OWNER_EMAIL,'blue');
+    save();
+  }).catch(err=>{
+    console.error(err);
+    // fallback to mailto
+    const sub=encodeURIComponent('Frantreesa Guest House — Daily Report '+fmtDate(getToday()));
+    window.open(`mailto:${OWNER_EMAIL}?cc=${STAFF_EMAIL}&subject=${sub}&body=${encodeURIComponent(report)}`,'_blank');
+    showToast('Email client opened as backup','info');
+  });
 }
 
-// INIT
-function init() {
+// ── AUTO REPORT ──────────────────────
+function checkAutoReport(){
+  const now=new Date();
+  if(now.getHours()===AUTO_HOUR&&now.getMinutes()===0&&localStorage.getItem('fgh_last_report')!==getToday()){
+    sendDailyReport();
+  }
+}
+
+// ── INIT ─────────────────────────────
+function init(){
   load();
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-  document.getElementById('sideDate').textContent = dateStr;
-  document.getElementById('topDate').textContent = dateStr;
+  emailjs.init(EJS_PK);
+  const savedTheme=localStorage.getItem('fgh_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',savedTheme);
+  document.getElementById('theme-label').textContent=savedTheme==='dark'?'Dark mode':'Light mode';
+  const dateStr=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('sideDate').textContent=dateStr;
+  document.getElementById('topDate').textContent=dateStr;
+  updateClock();
+  setInterval(updateClock,1000);
+  setInterval(checkAutoReport,60000);
   renderDashboard();
 }
 init();
