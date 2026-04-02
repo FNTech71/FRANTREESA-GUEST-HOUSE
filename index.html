@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frantreesa Guest House</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE6;
+  --border: #E2DDD5;
+  --border2: #CCC8BF;
+  --text: #1A1714;
+  --text2: #6B6560;
+  --text3: #9E9891;
+  --green: #1A7A52;
+  --green-bg: #E8F5EE;
+  --green-light: #D1EDE0;
+  --red: #C0392B;
+  --red-bg: #FDECEA;
+  --amber: #B45309;
+  --amber-bg: #FEF3C7;
+  --blue: #1D4ED8;
+  --blue-bg: #EFF6FF;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* LAYOUT */
+.shell { display: flex; min-height: 100vh; }
+.sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 10; }
+.logo { padding: 0 1.25rem 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+.logo h1 { font-family: 'DM Serif Display', serif; font-size: 19px; color: var(--text); line-height: 1.2; }
+.logo p { font-size: 12px; color: var(--text3); margin-top: 3px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 1.25rem; font-size: 14px; color: var(--text2); cursor: pointer; border-left: 2px solid transparent; transition: all 0.15s; }
+.nav-item:hover { color: var(--text); background: var(--bg); }
+.nav-item.active { color: var(--green); background: var(--green-bg); border-left-color: var(--green); font-weight: 500; }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar-footer { margin-top: auto; padding: 1rem 1.25rem 0; border-top: 1px solid var(--border); }
+.sidebar-footer p { font-size: 11px; color: var(--text3); line-height: 1.5; }
+
+.main { margin-left: 220px; flex: 1; padding: 2rem; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* TOPBAR */
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+.topbar h2 { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); }
+.topbar p { font-size: 13px; color: var(--text3); margin-top: 2px; }
+
+/* CARDS & GRIDS */
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 1.5rem; }
+.metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.25rem; }
+.metric .m-label { font-size: 12px; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+.metric .m-val { font-size: 26px; font-weight: 600; color: var(--text); }
+.metric .m-val.green { color: var(--green); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+.card-header h3 { font-size: 15px; font-weight: 600; }
+
+/* TABLES */
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th { text-align: left; padding: 9px 12px; font-size: 11px; color: var(--text3); border-bottom: 1px solid var(--border); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg); }
+.empty-row td { text-align: center; padding: 2.5rem; color: var(--text3); font-size: 14px; }
+
+/* BADGES */
+.badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.red { background: var(--red-bg); color: var(--red); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+.badge.blue { background: var(--blue-bg); color: var(--blue); }
+
+/* FORMS */
+.form-section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-grid.cols1 { grid-template-columns: 1fr; }
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fg label { font-size: 13px; color: var(--text2); font-weight: 500; }
+.fg input, .fg select, .fg textarea {
+  padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text); font-size: 14px; font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.15s; outline: none;
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,122,82,0.08); }
+.fg textarea { resize: vertical; min-height: 70px; }
+.fg .hint { font-size: 11px; color: var(--text3); }
+.optional { font-size: 11px; color: var(--text3); font-weight: 400; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+/* CALC BOX */
+.calc-box { background: var(--green-bg); border: 1px solid var(--green-light); border-radius: var(--radius); padding: 1.1rem 1.25rem; margin: 1rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.calc-box .calc-info { font-size: 13px; color: var(--green); }
+.calc-box .calc-info strong { font-size: 15px; display: block; margin-bottom: 2px; }
+.calc-box .calc-total { font-size: 28px; font-weight: 600; color: var(--green); }
+
+/* BUTTONS */
+.btn { padding: 9px 18px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-size: 14px; cursor: pointer; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.btn:hover { background: var(--bg); }
+.btn.primary { background: var(--green); color: #fff; border-color: var(--green); }
+.btn.primary:hover { background: #155e3e; }
+.btn.danger { background: var(--red); color: #fff; border-color: var(--red); }
+.btn.danger:hover { background: #9b2d22; }
+.btn.info { background: var(--blue); color: #fff; border-color: var(--blue); }
+.btn.info:hover { background: #1a44c2; }
+.btn.sm { padding: 5px 12px; font-size: 12px; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1rem; }
+
+/* ROOMS GRID */
+.rooms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+.room-tile { border: 1.5px solid var(--border); border-radius: var(--radius); padding: 14px 10px; text-align: center; }
+.room-tile.available { border-color: var(--green); background: var(--green-bg); }
+.room-tile.occupied { border-color: var(--red); background: var(--red-bg); }
+.room-tile.soon { background: var(--surface2); opacity: 0.6; }
+.room-num { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.room-status { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.room-tile.available .room-status { color: var(--green); }
+.room-tile.occupied .room-status { color: var(--red); }
+.room-tile.soon .room-status { color: var(--text3); }
+.room-guest { font-size: 11px; color: var(--red); margin-top: 3px; }
+
+/* SALES */
+.sales-item-row { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+.sales-item-row input, .sales-item-row select {
+  padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text); font-size: 13px; font-family: 'DM Sans', sans-serif; width: 100%;
+}
+.rm-btn { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 20px; line-height: 1; padding: 0 4px; }
+.rm-btn:hover { color: var(--red); }
+.total-strip { background: var(--surface2); border-radius: var(--radius); padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+.total-strip .lbl { font-size: 14px; font-weight: 500; }
+.total-strip .amt { font-size: 24px; font-weight: 600; color: var(--green); }
+
+/* CHART */
+.week-chart { display: flex; align-items: flex-end; gap: 8px; height: 130px; margin: 1rem 0 0.5rem; }
+.wc-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.wc-bar { width: 100%; background: var(--green); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s; }
+.wc-lbl { font-size: 11px; color: var(--text3); }
+.wc-val { font-size: 10px; font-weight: 600; color: var(--green); text-align: center; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 500; opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s; transform: translateY(8px); z-index: 999; color: #fff; font-family: 'DM Sans', sans-serif; max-width: 320px; }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* MOBILE */
+@media (max-width: 680px) {
+  .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; flex-wrap: wrap; padding: 0.75rem; }
+  .logo { display: none; }
+  .nav-item { padding: 7px 10px; font-size: 12px; border-left: none; border-bottom: 2px solid transparent; }
+  .nav-item.active { border-left: none; border-bottom-color: var(--green); }
+  .sidebar-footer { display: none; }
+  .shell { flex-direction: column; }
+  .main { margin-left: 0; padding: 1rem; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid.cols3 { grid-template-columns: 1fr 1fr; }
+  .sales-item-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>Frantreesa<br>Guest House</h1>
+      <p id="sideDate"></p>
+    </div>
+    <nav>
+      <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">🏠</span> Dashboard</div>
+      <div class="nav-item" onclick="showPage('register',this)"><span class="nav-icon">📋</span> Register guest</div>
+      <div class="nav-item" onclick="showPage('rooms',this)"><span class="nav-icon">🛏</span> Rooms</div>
+      <div class="nav-item" onclick="showPage('sales',this)"><span class="nav-icon">💰</span> Daily sales</div>
+      <div class="nav-item" onclick="showPage('report',this)"><span class="nav-icon">📊</span> Weekly report</div>
+    </nav>
+    <div class="sidebar-footer">
+      <p>Managed by<br><strong>Frederick Nyarko</strong></p>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+      <div class="topbar">
+        <div><h2>Dashboard</h2><p id="topDate"></p></div>
+        <button class="btn info" onclick="sendWeeklyEmail()">📧 Send weekly report</button>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="m-label">Rooms occupied</div><div class="m-val" id="d-occ">0 / 4</div></div>
+        <div class="metric"><div class="m-label">Active guests</div><div class="m-val" id="d-guests">0</div></div>
+        <div class="metric"><div class="m-label">Today's revenue</div><div class="m-val green" id="d-today">GHS 0.00</div></div>
+        <div class="metric"><div class="m-label">This week</div><div class="m-val green" id="d-week">GHS 0.00</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Active guests</h3></div>
+        <table>
+          <thead><tr><th>Guest</th><th>Nationality</th><th>Room</th><th>Guests</th><th>Check-in</th><th>Check-out</th><th>Total paid</th><th></th></tr></thead>
+          <tbody id="active-table"><tr class="empty-row"><td colspan="8">No active guests right now</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REGISTER GUEST -->
+    <div id="page-register" class="page">
+      <div class="topbar"><div><h2>Register guest</h2><p>Fill in all required fields to check in a new guest</p></div></div>
+      <div class="card">
+        <div class="form-section-label">Personal information</div>
+        <div class="form-grid">
+          <div class="fg"><label>Full name *</label><input type="text" id="r-name" placeholder="e.g. Kofi Asante Mensah"></div>
+          <div class="fg"><label>Phone number *</label><input type="tel" id="r-phone" placeholder="0XX XXX XXXX"></div>
+        </div>
+        <div class="form-grid">
+          <div class="fg"><label>Nationality *</label><input type="text" id="r-nationality" placeholder="e.g. Ghanaian"></div>
+          <div class="fg"><label>ID / Passport number <span class="optional">(optional)</span></label><input type="text" id="r-id" placeholder="GHA-XXXXXXXX or leave blank"></div>
+        </div>
+        <div class="form-grid">
+          <div class="fg"><label>Emergency contact name *</label><input type="text" id="r-ecname" placeholder="e.g. Ama Mensah"></div>
+          <div class="fg"><label>Emergency contact phone *</label><input type="tel" id="r-ecphone" placeholder="0XX XXX XXXX"></div>
+        </div>
+
+        <hr class="divider">
+        <div class="form-section-label">Stay details</div>
+        <div class="form-grid cols3">
+          <div class="fg"><label>Adults *</label><input type="number" id="r-adults" min="1" value="1"></div>
+          <div class="fg"><label>Children</label><input type="number" id="r-kids" min="0" value="0"></div>
+          <div class="fg"><label>Room *</label><select id="r-room"></select></div>
+        </div>
+        <div class="form-grid">
+          <div class="fg"><label>Check-in date *</label><input type="date" id="r-checkin" oninput="calcTotal()"></div>
+          <div class="fg"><label>Check-out date *</label><input type="date" id="r-checkout" oninput="calcTotal()"></div>
+        </div>
+        <div class="form-grid">
+          <div class="fg">
+            <label>Rate per night (GHS) *</label>
+            <input type="number" id="r-rate" placeholder="e.g. 150" oninput="calcTotal()">
+            <span class="hint">Total will be calculated automatically</span>
+          </div>
+          <div class="fg"><label>Payment method</label>
+            <select id="r-payment">
+              <option>Cash</option><option>Mobile Money</option><option>Bank transfer</option><option>Card</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="calc-box">
+          <div class="calc-info">
+            <strong id="calc-nights-label">Select dates and rate to calculate</strong>
+            <span id="calc-breakdown"></span>
+          </div>
+          <div class="calc-total" id="calc-total">GHS 0.00</div>
+        </div>
+
+        <div class="form-grid cols1">
+          <div class="fg"><label>Notes <span class="optional">(optional)</span></label><textarea id="r-notes" placeholder="Special requests, observations, anything else..."></textarea></div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn primary" onclick="registerGuest()">✓ Confirm registration</button>
+          <button class="btn" onclick="clearRegForm()">Clear form</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROOMS -->
+    <div id="page-rooms" class="page">
+      <div class="topbar"><div><h2>Rooms</h2><p>4 active rooms · 7 coming soon</p></div></div>
+      <div class="card">
+        <div class="card-header"><h3>Room status</h3></div>
+        <div class="rooms-grid" id="rooms-grid"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>All guest records</h3></div>
+        <table>
+          <thead><tr><th>Guest</th><th>Nationality</th><th>ID</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Nights</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead>
+          <tbody id="all-guests-table"><tr class="empty-row"><td colspan="10">No guest records yet</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DAILY SALES -->
+    <div id="page-sales" class="page">
+      <div class="topbar"><div><h2>Daily sales</h2><p>Record all payments received today</p></div></div>
+      <div class="card">
+        <div class="card-header"><h3>Today's entries</h3></div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;margin-bottom:6px;padding:0 4px">
+          <span style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Description</span>
+          <span style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Category</span>
+          <span style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Amount (GHS)</span>
+          <span></span>
+        </div>
+        <div id="sales-items"></div>
+        <button class="btn" onclick="addSalesItem()" style="margin-top:10px;font-size:13px">+ Add item</button>
+        <div class="total-strip">
+          <span class="lbl">Total today</span>
+          <span class="amt" id="sales-total">GHS 0.00</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" onclick="saveSales()">Save today's sales</button>
+          <button class="btn" onclick="clearSalesItems()">Clear</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Sales history</h3></div>
+        <table>
+          <thead><tr><th>Date</th><th>Items</th><th>Total</th></tr></thead>
+          <tbody id="sales-history-table"><tr class="empty-row"><td colspan="3">No sales recorded yet</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- WEEKLY REPORT -->
+    <div id="page-report" class="page">
+      <div class="topbar">
+        <div><h2>Weekly report</h2><p>Summary for the current week</p></div>
+        <button class="btn info" onclick="sendWeeklyEmail()">📧 Email report to owner</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Revenue this week</h3></div>
+        <div class="week-chart" id="week-chart"></div>
+        <div class="metrics" style="margin-top:1rem;margin-bottom:0">
+          <div class="metric"><div class="m-label">Week total</div><div class="m-val green" id="r-total">GHS 0.00</div></div>
+          <div class="metric"><div class="m-label">New bookings</div><div class="m-val" id="r-bookings">0</div></div>
+          <div class="metric"><div class="m-label">Best day</div><div class="m-val" id="r-best">–</div></div>
+          <div class="metric"><div class="m-label">Daily average</div><div class="m-val" id="r-avg">GHS 0.00</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Guests this week</h3></div>
+        <table>
+          <thead><tr><th>Guest</th><th>Nationality</th><th>Room</th><th>Nights</th><th>Total paid</th><th>Payment</th><th>Status</th></tr></thead>
+          <tbody id="report-table"><tr class="empty-row"><td colspan="7">No guests this week yet</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// CONFIG — emails
+const STAFF_EMAIL = 'nyarkofredderick720@gmail.com';
+const OWNER_EMAIL = 'franknyarko81@gmail.com';
+
+const ROOMS = [
+  {id:1,name:'Room 1',active:true},{id:2,name:'Room 2',active:true},
+  {id:3,name:'Room 3',active:true},{id:4,name:'Room 4',active:true},
+  {id:5,name:'Room 5',active:false},{id:6,name:'Room 6',active:false},
+  {id:7,name:'Room 7',active:false},{id:8,name:'Room 8',active:false},
+  {id:9,name:'Room 9',active:false},{id:10,name:'Room 10',active:false},
+  {id:11,name:'Room 11',active:false}
+];
+
+let bookings = [], salesHistory = [], salesItems = [];
+
+function load() {
+  try {
+    const b = localStorage.getItem('ghm_bookings');
+    const s = localStorage.getItem('ghm_sales');
+    if (b) bookings = JSON.parse(b);
+    if (s) salesHistory = JSON.parse(s);
+  } catch(e) {}
+}
+function save() {
+  try {
+    localStorage.setItem('ghm_bookings', JSON.stringify(bookings));
+    localStorage.setItem('ghm_sales', JSON.stringify(salesHistory));
+  } catch(e) {}
+}
+
+function toast(msg, color) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = color || '#1A7A52';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'register') initRegisterForm();
+  if (name === 'rooms') renderRooms();
+  if (name === 'sales') renderSalesTab();
+  if (name === 'report') renderReport();
+}
+
+function getToday() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(d) { if (!d) return '–'; return new Date(d + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}); }
+function fmtGHS(n) { return 'GHS ' + Number(n || 0).toFixed(2); }
+function nights(a, b) { if (!a || !b) return 0; return Math.max(0, Math.round((new Date(b) - new Date(a)) / 86400000)); }
+function isActive(b) { const t = getToday(); return b.checkin <= t && b.checkout > t && b.active !== false; }
+function isThisWeek(d) {
+  const dt = new Date(d + 'T00:00:00'), now = new Date();
+  const s = new Date(now); s.setDate(now.getDate() - now.getDay()); s.setHours(0,0,0,0);
+  const e = new Date(s); e.setDate(s.getDate() + 7);
+  return dt >= s && dt < e;
+}
+
+// DASHBOARD
+function renderDashboard() {
+  const active = bookings.filter(isActive);
+  const occ = new Set(active.map(b => b.room)).size;
+  const todayRev = salesHistory.filter(s => s.date === getToday()).reduce((s, d) => s + d.total, 0);
+  const weekRev = salesHistory.filter(s => isThisWeek(s.date)).reduce((s, d) => s + d.total, 0);
+  document.getElementById('d-occ').textContent = occ + ' / 4';
+  document.getElementById('d-guests').textContent = active.length;
+  document.getElementById('d-today').textContent = fmtGHS(todayRev);
+  document.getElementById('d-week').textContent = fmtGHS(weekRev);
+  const tb = document.getElementById('active-table');
+  if (!active.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="8">No active guests right now</td></tr>'; return; }
+  tb.innerHTML = active.map(b => `<tr>
+    <td><strong>${b.name}</strong><br><span style="font-size:11px;color:var(--text3)">${b.phone}</span></td>
+    <td>${b.nationality}</td>
+    <td>${b.room}</td>
+    <td style="font-size:12px">${b.adults} adult${b.adults>1?'s':''}${b.kids>0?', '+b.kids+' child'+(b.kids>1?'ren':''):''}</td>
+    <td>${fmtDate(b.checkin)}</td>
+    <td>${fmtDate(b.checkout)}</td>
+    <td><strong>${fmtGHS(b.total)}</strong></td>
+    <td><button class="btn danger sm" onclick="checkOut(${b.id})">Check out</button></td>
+  </tr>`).join('');
+}
+
+function checkOut(id) {
+  const b = bookings.find(x => x.id === id);
+  if (b) { b.active = false; save(); toast(b.name + ' checked out successfully'); renderDashboard(); }
+}
+
+// REGISTER
+function calcTotal() {
+  const ci = document.getElementById('r-checkin').value;
+  const co = document.getElementById('r-checkout').value;
+  const rate = Number(document.getElementById('r-rate').value) || 0;
+  const n = nights(ci, co);
+  const total = n * rate;
+  document.getElementById('calc-nights-label').textContent = n > 0 ? n + ' night' + (n > 1 ? 's' : '') : 'Select dates and rate to calculate';
+  document.getElementById('calc-breakdown').textContent = n > 0 && rate > 0 ? n + ' nights × GHS ' + rate.toFixed(2) + ' per night' : '';
+  document.getElementById('calc-total').textContent = fmtGHS(total);
+}
+
+function initRegisterForm() {
+  const active = bookings.filter(isActive);
+  const occ = new Set(active.map(b => b.room));
+  const sel = document.getElementById('r-room');
+  const available = ROOMS.filter(r => r.active && !occ.has(r.name));
+  sel.innerHTML = available.length ? available.map(r => `<option value="${r.name}">${r.name}</option>`).join('') : '<option disabled>No rooms available</option>';
+  const today = getToday();
+  document.getElementById('r-checkin').value = today;
+  const tom = new Date(); tom.setDate(tom.getDate() + 1);
+  document.getElementById('r-checkout').value = tom.toISOString().split('T')[0];
+  calcTotal();
+}
+
+function registerGuest() {
+  const name = document.getElementById('r-name').value.trim();
+  const phone = document.getElementById('r-phone').value.trim();
+  const nationality = document.getElementById('r-nationality').value.trim();
+  const idnum = document.getElementById('r-id').value.trim();
+  const ecname = document.getElementById('r-ecname').value.trim();
+  const ecphone = document.getElementById('r-ecphone').value.trim();
+  const adults = Number(document.getElementById('r-adults').value) || 1;
+  const kids = Number(document.getElementById('r-kids').value) || 0;
+  const room = document.getElementById('r-room').value;
+  const checkin = document.getElementById('r-checkin').value;
+  const checkout = document.getElementById('r-checkout').value;
+  const rate = Number(document.getElementById('r-rate').value);
+  const payment = document.getElementById('r-payment').value;
+  const notes = document.getElementById('r-notes').value.trim();
+
+  if (!name || !phone || !nationality || !ecname || !ecphone || !room || !checkin || !checkout || !rate) {
+    toast('Please fill all required fields (*)', '#C0392B'); return;
+  }
+  if (checkout <= checkin) { toast('Check-out must be after check-in', '#C0392B'); return; }
+
+  const n = nights(checkin, checkout);
+  const total = n * rate;
+
+  bookings.push({ id: Date.now(), name, phone, nationality, idnum, ecname, ecphone, adults, kids, room, checkin, checkout, rate, nights: n, total, payment, notes, active: true });
+  save();
+  toast('✓ ' + name + ' registered in ' + room + ' — ' + fmtGHS(total));
+  clearRegForm();
+  initRegisterForm();
+}
+
+function clearRegForm() {
+  ['r-name','r-phone','r-nationality','r-id','r-ecname','r-ecphone','r-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('r-adults').value = 1;
+  document.getElementById('r-kids').value = 0;
+  document.getElementById('r-rate').value = '';
+  calcTotal();
+}
+
+// ROOMS
+function renderRooms() {
+  const active = bookings.filter(isActive);
+  const occ = new Set(active.map(b => b.room));
+  document.getElementById('rooms-grid').innerHTML = ROOMS.map(r => {
+    if (!r.active) return `<div class="room-tile soon"><div class="room-num">${r.id}</div><div class="room-status">Coming soon</div></div>`;
+    const o = occ.has(r.name);
+    const guest = o ? active.find(b => b.room === r.name) : null;
+    return `<div class="room-tile ${o ? 'occupied' : 'available'}">
+      <div class="room-num">${r.id}</div>
+      <div class="room-status">${o ? 'Occupied' : 'Available'}</div>
+      ${guest ? `<div class="room-guest">${guest.name.split(' ')[0]}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  const tb = document.getElementById('all-guests-table');
+  if (!bookings.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="10">No guest records yet</td></tr>'; return; }
+  tb.innerHTML = [...bookings].sort((a,b) => b.checkin.localeCompare(a.checkin)).map(b => `<tr>
+    <td><strong>${b.name}</strong><br><span style="font-size:11px;color:var(--text3)">${b.phone}</span></td>
+    <td>${b.nationality}</td>
+    <td style="font-size:12px;color:var(--text3)">${b.idnum || '–'}</td>
+    <td>${b.room}</td>
+    <td>${fmtDate(b.checkin)}</td>
+    <td>${fmtDate(b.checkout)}</td>
+    <td>${b.nights}</td>
+    <td><strong>${fmtGHS(b.total)}</strong></td>
+    <td>${b.payment}</td>
+    <td><span class="badge ${isActive(b)?'green':b.active===false?'amber':'blue'}">${isActive(b)?'Active':b.active===false?'Checked out':'Upcoming'}</span></td>
+  </tr>`).join('');
+}
+
+// SALES
+function addSalesItem() {
+  salesItems.push({ id: Date.now(), desc: '', cat: 'Room payment', amount: '' });
+  renderSalesItems();
+}
+function removeSalesItem(id) { salesItems = salesItems.filter(s => s.id !== id); renderSalesItems(); }
+function updateSI(id, field, val) { const i = salesItems.find(s => s.id === id); if (i) i[field] = val; updateSalesTotal(); }
+function updateSalesTotal() {
+  const t = salesItems.reduce((s, i) => s + Number(i.amount || 0), 0);
+  document.getElementById('sales-total').textContent = fmtGHS(t);
+}
+function renderSalesItems() {
+  document.getElementById('sales-items').innerHTML = salesItems.map(item => `
+    <div class="sales-item-row">
+      <input type="text" placeholder="e.g. Room 1 payment" value="${item.desc}" oninput="updateSI(${item.id},'desc',this.value)">
+      <select onchange="updateSI(${item.id},'cat',this.value)">
+        <option ${item.cat==='Room payment'?'selected':''}>Room payment</option>
+        <option ${item.cat==='Food'?'selected':''}>Food</option>
+        <option ${item.cat==='Laundry'?'selected':''}>Laundry</option>
+        <option ${item.cat==='Other'?'selected':''}>Other</option>
+      </select>
+      <input type="number" placeholder="0.00" value="${item.amount}" oninput="updateSI(${item.id},'amount',this.value)">
+      <button class="rm-btn" onclick="removeSalesItem(${item.id})">×</button>
+    </div>`).join('');
+  updateSalesTotal();
+}
+function saveSales() {
+  if (!salesItems.length) { toast('Add at least one item first', '#C0392B'); return; }
+  const total = salesItems.reduce((s, i) => s + Number(i.amount || 0), 0);
+  const today = getToday();
+  const idx = salesHistory.findIndex(s => s.date === today);
+  const entry = { date: today, items: [...salesItems], total };
+  if (idx >= 0) salesHistory[idx] = entry; else salesHistory.push(entry);
+  save();
+  toast('Sales saved — ' + fmtGHS(total));
+  renderSalesHistory();
+}
+function clearSalesItems() { salesItems = []; renderSalesItems(); }
+function renderSalesTab() { renderSalesItems(); renderSalesHistory(); }
+function renderSalesHistory() {
+  const tb = document.getElementById('sales-history-table');
+  if (!salesHistory.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="3">No sales recorded yet</td></tr>'; return; }
+  tb.innerHTML = [...salesHistory].sort((a,b) => b.date.localeCompare(a.date)).map(s => `
+    <tr><td>${fmtDate(s.date)}</td>
+    <td style="font-size:12px;color:var(--text3)">${s.items.map(i => i.desc || i.cat).join(', ')}</td>
+    <td><strong>${fmtGHS(s.total)}</strong></td></tr>`).join('');
+}
+
+// REPORT
+function renderReport() {
+  const DAY_LABELS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const now = new Date();
+  const sow = new Date(now); sow.setDate(now.getDate() - now.getDay()); sow.setHours(0,0,0,0);
+  const weekDays = Array.from({length:7}, (_,i) => { const d = new Date(sow); d.setDate(sow.getDate()+i); return d.toISOString().split('T')[0]; });
+  const dayTotals = weekDays.map(date => {
+    const e = salesHistory.find(s => s.date === date);
+    return { date, total: e ? e.total : 0, label: DAY_LABELS[new Date(date+'T00:00:00').getDay()] };
+  });
+  const weekTotal = dayTotals.reduce((s,d) => s+d.total, 0);
+  const maxDay = Math.max(...dayTotals.map(d => d.total), 1);
+  const best = dayTotals.reduce((a,b) => b.total > a.total ? b : a);
+  const wb = bookings.filter(b => isThisWeek(b.checkin));
+
+  document.getElementById('r-total').textContent = fmtGHS(weekTotal);
+  document.getElementById('r-bookings').textContent = wb.length;
+  document.getElementById('r-best').textContent = best.total > 0 ? (best.label + ' (' + fmtGHS(best.total) + ')') : '–';
+  document.getElementById('r-avg').textContent = fmtGHS(weekTotal / 7);
+
+  document.getElementById('week-chart').innerHTML = dayTotals.map(d => `
+    <div class="wc-col">
+      <div class="wc-val">${d.total > 0 ? fmtGHS(d.total) : ''}</div>
+      <div class="wc-bar" style="height:${Math.max(4,(d.total/maxDay)*100)}px"></div>
+      <div class="wc-lbl">${d.label}</div>
+    </div>`).join('');
+
+  const rt = document.getElementById('report-table');
+  if (!wb.length) { rt.innerHTML = '<tr class="empty-row"><td colspan="7">No guests registered this week yet</td></tr>'; return; }
+  rt.innerHTML = wb.map(b => `<tr>
+    <td><strong>${b.name}</strong><br><span style="font-size:11px;color:var(--text3)">${b.phone}</span></td>
+    <td>${b.nationality}</td><td>${b.room}</td><td>${b.nights}</td>
+    <td><strong>${fmtGHS(b.total)}</strong></td><td>${b.payment}</td>
+    <td><span class="badge ${isActive(b)?'green':'amber'}">${isActive(b)?'Active':'Checked out'}</span></td>
+  </tr>`).join('');
+}
+
+// EMAIL
+function buildReport() {
+  const now = new Date();
+  const sow = new Date(now); sow.setDate(now.getDate() - now.getDay()); sow.setHours(0,0,0,0);
+  const weekDays = Array.from({length:7}, (_,i) => { const d = new Date(sow); d.setDate(sow.getDate()+i); return d.toISOString().split('T')[0]; });
+  const weekTotal = salesHistory.filter(s => weekDays.includes(s.date)).reduce((s,d) => s+d.total, 0);
+  const wb = bookings.filter(b => isThisWeek(b.checkin));
+  const active = bookings.filter(isActive);
+  const DAY_LABELS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  let txt = 'FRANTREESA GUEST HOUSE — WEEKLY REPORT\n';
+  txt += '='.repeat(40) + '\n';
+  txt += `Week: ${fmtDate(weekDays[0])} to ${fmtDate(weekDays[6])}\n`;
+  txt += `Generated: ${new Date().toLocaleString('en-GB')}\n`;
+  txt += `Prepared by: Frederick Nyarko\n\n`;
+  txt += 'SUMMARY\n' + '-'.repeat(30) + '\n';
+  txt += `Total revenue this week:   ${fmtGHS(weekTotal)}\n`;
+  txt += `New guest registrations:   ${wb.length}\n`;
+  txt += `Guests currently staying:  ${active.length}\n\n`;
+  txt += 'DAILY REVENUE BREAKDOWN\n' + '-'.repeat(30) + '\n';
+  weekDays.forEach(date => {
+    const e = salesHistory.find(s => s.date === date);
+    const lbl = new Date(date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    txt += `${lbl.padEnd(16)} ${e ? fmtGHS(e.total) : 'GHS 0.00'}\n`;
+  });
+  txt += `\n${'TOTAL'.padEnd(16)} ${fmtGHS(weekTotal)}\n\n`;
+  txt += 'GUEST REGISTRATIONS THIS WEEK\n' + '-'.repeat(30) + '\n';
+  if (!wb.length) { txt += 'No new guests this week.\n'; }
+  wb.forEach((b, i) => {
+    txt += `\n${i+1}. ${b.name}\n`;
+    txt += `   Nationality:       ${b.nationality}\n`;
+    if (b.idnum) txt += `   ID/Passport:      ${b.idnum}\n`;
+    txt += `   Phone:             ${b.phone}\n`;
+    txt += `   Emergency contact: ${b.ecname} — ${b.ecphone}\n`;
+    txt += `   Room:              ${b.room}\n`;
+    txt += `   Check-in:          ${fmtDate(b.checkin)}\n`;
+    txt += `   Check-out:         ${fmtDate(b.checkout)}\n`;
+    txt += `   Nights:            ${b.nights}\n`;
+    txt += `   Rate per night:    ${fmtGHS(b.rate)}\n`;
+    txt += `   Total paid:        ${fmtGHS(b.total)}\n`;
+    txt += `   Payment method:    ${b.payment}\n`;
+    txt += `   Guests:            ${b.adults} adult${b.adults>1?'s':''}${b.kids>0?', '+b.kids+' child'+(b.kids>1?'ren':''):''}\n`;
+    if (b.notes) txt += `   Notes:             ${b.notes}\n`;
+    txt += `   Status:            ${isActive(b)?'Currently staying':'Checked out'}\n`;
+  });
+  txt += '\n' + '='.repeat(40) + '\n';
+  txt += 'Frantreesa Guest House — Automated Weekly Report\n';
+  return txt;
+}
+
+function sendWeeklyEmail() {
+  const report = buildReport();
+  const subject = encodeURIComponent('Frantreesa Guest House — Weekly Report ' + new Date().toLocaleDateString('en-GB'));
+  const body = encodeURIComponent(report);
+  window.open(`mailto:${OWNER_EMAIL}?cc=${STAFF_EMAIL}&subject=${subject}&body=${body}`, '_blank');
+  toast('Email client opened — report ready to send to Dad');
+}
+
+// INIT
+function init() {
+  load();
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  document.getElementById('sideDate').textContent = dateStr;
+  document.getElementById('topDate').textContent = dateStr;
+  renderDashboard();
+}
+init();
+</script>
+</body>
+</html>
