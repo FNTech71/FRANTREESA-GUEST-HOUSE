@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopKepa – Provision Shop Manager</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- STYLES -->
+<style>
+:root {
+ --green:#1a7a4a;
+ --green-light:#e8f5ee;
+ --amber:#c97b1a;
+ --amber-light:#fef3dc;
+ --red:#c0392b;
+ --red-light:#fdecea;
+ --gold:#f0a500;
+ --bg:#f7f5f0;
+ --surface:#ffffff;
+ --border:#e2ddd4;
+ --text:#1c1a16;
+ --muted:#6b6560;
+ --radius:12px;
+ --shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+ font-family:'DM Sans',sans-serif;
+ background:var(--bg);
+ color:var(--text);
+ min-height:100vh;
+}
+.topbar{
+ background:var(--green);
+ color:white;
+ height:60px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:0 1.5rem;
+}
+.logo{
+ font-family:'Syne',sans-serif;
+ font-weight:800;
+ font-size:1.4rem;
+}
+.logo span{color:var(--gold)}
+.app{display:flex}
+.sidebar{
+ width:220px;
+ background:var(--surface);
+ border-right:1px solid var(--border);
+ padding:1.5rem 0;
+}
+.nav-item{
+ padding:10px 20px;
+ cursor:pointer;
+ color:var(--muted);
+}
+.nav-item:hover,
+.nav-item.active{
+ background:var(--green-light);
+ color:var(--green);
+}
+.main{
+ flex:1;
+ padding:1.5rem;
+}
+.page{display:none}
+.page.active{display:block}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+ <div class="logo">Shop<span>Kepa</span> 🛒</div>
+ <div>Nana Akua Ferkaa Ventures</div>
+</div>
+
+<div class="app">
+<nav class="sidebar">
+ <div class="nav-item active">📊 Dashboard</div>
+ <div class="nav-item">📦 Inventory</div>
+ <div class="nav-item">➕ Add Stock</div>
+ <div class="nav-item">⚠️ Alerts</div>
+ <div class="nav-item">⚙️ Settings</div>
+</nav>
+
+<main class="main">
+ <div class="page active">
+  <h1>Welcome 👋</h1>
+  <p>Your ShopKepa app is working correctly.</p>
+ </div>
+</main>
+</div>
+
+</body>
+</html>
